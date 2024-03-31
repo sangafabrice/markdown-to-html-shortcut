@@ -1,0 +1,1 @@
+(new ActiveXObject('WScript.Shell')).Run('pwsh.exe -nop -noni -f "' + WScript.ScriptFullName.replace(/\.js$/,'.ps1') + '" "' + WScript.Arguments.Named('MarkdownFilePath') + '"', 0, false);
