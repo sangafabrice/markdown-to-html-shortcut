@@ -6,7 +6,7 @@ Install the context menu shortcut to convert Markdown files to HTML files.
 # The arguments to Set-Item and New-Item cmdlets.
 $Arguments = @{
   # The registry key of the command executed by the shortcut.
-  Path = 'Registry::HKEY_CLASSES_ROOT\SystemFileAssociations\.md\shell\ConvertToHtml\Command'
+  Path = 'HKCU:\SOFTWARE\Classes\SystemFileAssociations\.md\shell\ConvertToHtml\Command'
   # The JScript script to hide the PowerShell console window is executed in GUI mode (WScript).
   # %1 is the path to the selected mardown file to convert.
   Value = 'wscript.exe //e:jscript "{0}\Convert-MdToHtml.js" /MarkdownFilePath:"%1"' -f $PSScriptRoot
