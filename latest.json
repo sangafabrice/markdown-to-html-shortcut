@@ -5,6 +5,7 @@
     "BUILD: Package functions to add and remove the shortcut.",
     "FEAT: Set NoIcon and HideConsole as options.",
     "NoIcon specifies that no shortcut icon should be set.",
-    "HideConsole specifies that the PowerShell console window should be hidden."
+    "HideConsole specifies that the PowerShell console window should be hidden.",
+    ""
   ]
 }
