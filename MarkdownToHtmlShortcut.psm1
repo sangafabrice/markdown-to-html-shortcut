@@ -8,19 +8,28 @@ Function Install-MarkdownToHtmlShortcut {
   This function creates a context menu shortcut to convert Markdown files to HTML files by setting up the Windows Registry.
   .PARAMETER NoIcon
   Specifies that the shortcut icon should not be configured.
+  .PARAMETER HideConsole
+  Specified that the PowerShell Core console window should be hidden when clicking the shortcut.
   #>
   [CmdletBinding()]
   Param (
-    [switch] $NoIcon
+    [switch] $NoIcon,
+    [switch] $HideConsole
   )
 
   # The arguments to Set-Item and New-Item cmdlets.
   $Arguments = @{
     # The registry key of the command executed by the shortcut.
     Path = 'HKCU:\SOFTWARE\Classes\SystemFileAssociations\.md\shell\ConvertToHtml\Command'
-    # The JScript script to hide the PowerShell console window is executed in GUI mode (WScript).
     # %1 is the path to the selected mardown file to convert.
-    Value = 'wscript.exe //e:jscript "{0}\Convert-MdToHtml.js" /MarkdownFilePath:"%1"' -f $PSScriptRoot
+    Value = $(
+      If ($HideConsole) {
+          # The JScript script to hide the PowerShell console window is executed in GUI mode (WScript).
+          'wscript.exe //e:jscript "{0}\Convert-MdToHtml.js" /MarkdownFilePath:"%1"'
+        } Else {
+          'pwsh.exe -nol -ep Bypass -noni -nop -w Hidden -f "{0}\Convert-MdToHtml.ps1" -MarkdownFilePath "%1"'
+        }
+      ) -f $PSScriptRoot
   }
   # Overwrite the key value if it already exists.
   # Otherwise, create it.
