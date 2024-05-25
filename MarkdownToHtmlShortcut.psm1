@@ -23,7 +23,7 @@ Function Install-MarkdownToHtmlShortcut {
     Path = 'HKCU:\SOFTWARE\Classes\SystemFileAssociations\.md\shell\ConvertToHtml\Command'
     # %1 is the path to the selected mardown file to convert.
     Value = $(
-      If ($HideConsole) {
+        If ($HideConsole) {
           # The JScript script to hide the PowerShell console window is executed in GUI mode (WScript).
           'wscript.exe //e:jscript "{0}\Convert-MarkdownToHtml.js" /MarkdownFilePath:"%1"'
         } Else {
