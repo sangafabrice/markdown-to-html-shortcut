@@ -18,7 +18,7 @@ Here's the link to the "team session".
 
 PS> (Get-ChildItem Readme.*).Name
 Readme.md
-PS> .\Convert-MdToHtml .\Readme.md
+PS> .\Convert-MarkdownToHtml .\Readme.md
 PS> Get-Content .\Readme.html
 <p><strong>Welcome aboard</strong></p>
 <p>Here's the link to the <a href="https://fromthetechlab.blogspot.com">team session</a>.</p>
