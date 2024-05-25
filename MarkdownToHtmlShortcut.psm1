@@ -6,9 +6,13 @@ Function Install-MarkdownToHtmlShortcut {
   Install the context menu shortcut to convert Markdown files to HTML files.
   .DESCRIPTION
   This function creates a context menu shortcut to convert Markdown files to HTML files by setting up the Windows Registry.
+  .PARAMETER NoIcon
+  Specifies that the shortcut icon should not be configured.
   #>
   [CmdletBinding()]
-  Param ()
+  Param (
+    [switch] $NoIcon
+  )
 
   # The arguments to Set-Item and New-Item cmdlets.
   $Arguments = @{
@@ -29,6 +33,9 @@ Function Install-MarkdownToHtmlShortcut {
   }
   # Set the text on the menu and the icon using the parent of the command key: ConvertToHtml.
   Set-Item -Path $CommandKey.PSParentPath -Value 'Convert to &HTML' -Force
+  If ($NoIcon) {
+    Return
+  }
   Set-ItemProperty -Path $CommandKey.PSParentPath -Name 'Icon' -Value "$PSScriptRoot\shortcut-icon.ico" -Force
 }
 
