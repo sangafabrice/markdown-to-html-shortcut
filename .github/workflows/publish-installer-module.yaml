@@ -1,0 +1,25 @@
+name: Publish Installer Module
+on:
+  push:
+    paths:
+      - 'latest.json'
+  workflow_dispatch:
+jobs:
+  publish-module:
+    name: Publish MarkdownToHtmlShortcut to PSGallery
+    permissions:
+      contents: write
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build-Test
+      run: |
+        . .\build.ps1
+        Start-ModuleInstallationBuild
+        Set-ModuleInstallationTestReport -TestResult @{ FailedCount = 0; CodeCoverage = 0 }
+        Push-ModuleInstallationTestReport -Email ${{ secrets.EMAIL_KEY }}
+    - name: Publish
+      if: success()
+      run: |
+        Import-Module ProcessInspector -Force
+        Publish-Module -Name ProcessInspector -NuGetApiKey ${{ secrets.NUGET_API_KEY }} -Force
