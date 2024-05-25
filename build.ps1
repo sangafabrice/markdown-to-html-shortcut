@@ -55,7 +55,7 @@ Note that it does not require administrators' privileges to run.
             Tags = @('context-menu-shortcut','windows-registry')
             LicenseUri = "$ProjectUri/blob/main/LICENSE"
             ProjectUri = $ProjectUri
-            IconUri = 'https://rawcdn.githack.com/sangafabrice/convertto-html-shortcut/21b57930f0c3cd3606d8c54861d1a4e6146fd046/module-icon.svg'
+            IconUri = 'https://rawcdn.githack.com/sangafabrice/convertto-html-shortcut/38c15d63a6220f088d017624ff7173cb8be92015/module-icon.svg'
             ReleaseNotes = $LatestJson.releaseNotes -join "`n"
         }.ForEach{
             New-ModuleManifest @_ -ErrorAction Stop -Verbose:$VerboseFlag
