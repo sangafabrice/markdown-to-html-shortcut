@@ -43,6 +43,7 @@ Function Install-MarkdownToHtmlShortcut {
   # Set the text on the menu and the icon using the parent of the command key: ConvertToHtml.
   Set-Item -Path $CommandKey.PSParentPath -Value 'Convert to &HTML' -Force
   If ($NoIcon) {
+    Remove-ItemProperty -Path $CommandKey.PSParentPath -Name 'Icon' -Force -ErrorAction SilentlyContinue
     Return
   }
   Set-ItemProperty -Path $CommandKey.PSParentPath -Name 'Icon' -Value "$PSScriptRoot\shortcut-icon.ico" -Force
