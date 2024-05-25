@@ -31,3 +31,17 @@ Function Install-MarkdownToHtmlShortcut {
   Set-Item -Path $CommandKey.PSParentPath -Value 'Convert to &HTML' -Force
   Set-ItemProperty -Path $CommandKey.PSParentPath -Name 'Icon' -Value "$PSScriptRoot\shortcut-icon.ico" -Force
 }
+
+Function Remove-MarkdownToHtmlShortcut {
+  <#
+  .SYNOPSIS
+  Remove the context menu shortcut to convert Markdown files to HTML files.
+  .DESCRIPTION
+  This function removes the context menu shortcut to convert Markdown files to HTML files by setting up the Windows Registry.
+  #>
+  [CmdletBinding()]
+  Param ()
+
+  # Remove the registry key of the shortcut verb.
+  Remove-Item 'HKCU:\SOFTWARE\Classes\SystemFileAssociations\.md\shell\ConvertToHtml' -Recurse
+}
