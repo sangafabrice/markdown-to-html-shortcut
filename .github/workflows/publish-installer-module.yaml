@@ -21,5 +21,5 @@ jobs:
     - name: Publish
       if: success()
       run: |
-        Import-Module ProcessInspector -Force
-        Publish-Module -Name ProcessInspector -NuGetApiKey ${{ secrets.NUGET_API_KEY }} -Force
+        Import-Module MarkdownToHtmlShortcut -Force
+        Publish-Module -Name MarkdownToHtmlShortcut -NuGetApiKey ${{ secrets.NUGET_API_KEY }} -Force
