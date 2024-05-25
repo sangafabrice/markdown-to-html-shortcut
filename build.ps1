@@ -22,4 +22,4 @@ Else {
 }
 # Set the text on the menu and the icon using the parent of the command key: ConvertToHtml.
 Set-Item -Path $CommandKey.PSParentPath -Value 'Convert to &HTML' -Force
-Set-ItemProperty -Path $CommandKey.PSParentPath -Name 'Icon' -Value "$PSScriptRoot\identity.ico" -Force
+Set-ItemProperty -Path $CommandKey.PSParentPath -Name 'Icon' -Value "$PSScriptRoot\shortcut-icon.ico" -Force
