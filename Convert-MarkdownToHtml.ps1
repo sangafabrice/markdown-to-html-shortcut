@@ -35,13 +35,15 @@ Param (
 # If the HTML file of the same base name and in the same folder as the input Mardown file exists,
 # prompt the user to choose to overwrite or cancel the conversion with a message box dialog.
 If (Test-Path ($HtmlFilePath = [System.IO.Path]::ChangeExtension($MarkdownFilePath, 'html'))) {
+  If (Start-Job {
   Add-Type -AssemblyName PresentationFramework
-  If (([System.Windows.MessageBox]::Show(
+  [System.Windows.MessageBox]::Show(
     "The file `"$HtmlFilePath`" already exists.`n`nDo you want to overwrite it?",
     'Convert Markdown to HTML',
     4,
     48
-  )) -ieq 'No') {
+  ) -ieq 'No'
+  } | Receive-Job -Wait -AutoRemoveJob) {
       Return
   }
 }
