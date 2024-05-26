@@ -1,5 +1,9 @@
 #Requires -Version 6.1
 
+If (-not $IsWindows) {
+  Throw 'Windows platform required. The script can only be executed in a Windows OS.'
+}
+
 Function Install-MarkdownToHtmlShortcut {
   <#
   .SYNOPSIS
