@@ -28,12 +28,8 @@ Convert a simple Readme.md file to HTML.
 [CmdletBinding()]
 Param (
   [Parameter(Mandatory)]
-  [ValidateScript({
-    # Ensure that the path string carries
-    # the information of an existing .md file.
-    Test-Path $_ -PathType Leaf
-    (Get-Item $_).Extension -ieq '.md'
-  })]
+  [ValidatePattern('\.md$')]
+  [ValidateScript({Test-Path $_ -PathType Leaf})]
   [string] $MarkdownFilePath    
 )
 # If the HTML file of the same base name and in the same folder as the input Mardown file exists,
