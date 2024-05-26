@@ -1,5 +1,5 @@
 {
-  "version": "0.0.5",
+  "version": "0.0.6",
   "releaseNotes": [
     "FEAT: Add Convert Mardkdown to HTM context menu shortcut.",
     "BUILD: Package functions to add and remove the shortcut.",

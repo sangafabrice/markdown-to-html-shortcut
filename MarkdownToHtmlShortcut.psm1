@@ -13,7 +13,7 @@ Function Install-MarkdownToHtmlShortcut {
   .PARAMETER NoIcon
   Specifies that the shortcut icon should not be configured.
   .PARAMETER HideConsole
-  Specified that the PowerShell Core console window should be hidden when clicking the shortcut.
+  Specifies that the PowerShell Core console window should be hidden when clicking the shortcut.
   #>
   [CmdletBinding()]
   Param (
