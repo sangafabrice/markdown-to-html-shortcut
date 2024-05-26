@@ -36,13 +36,13 @@ Param (
 # prompt the user to choose to overwrite or cancel the conversion with a message box dialog.
 If (Test-Path ($HtmlFilePath = [System.IO.Path]::ChangeExtension($MarkdownFilePath, 'html'))) {
   If (Start-Job {
-  Add-Type -AssemblyName PresentationFramework
-  [System.Windows.MessageBox]::Show(
-    "The file `"$HtmlFilePath`" already exists.`n`nDo you want to overwrite it?",
-    'Convert Markdown to HTML',
-    4,
-    48
-  ) -ieq 'No'
+    Add-Type -AssemblyName PresentationFramework
+    [System.Windows.MessageBox]::Show(
+      "The file `"$HtmlFilePath`" already exists.`n`nDo you want to overwrite it?",
+      'Convert Markdown to HTML',
+      4,
+      48
+    ) -ieq 'No'
   } | Receive-Job -Wait -AutoRemoveJob) {
       Return
   }
