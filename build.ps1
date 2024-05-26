@@ -38,7 +38,7 @@ Filter New-ModuleInstallationManifest {
             CompanyName = 'sangafabrice'
             Copyright = "© $((Get-Date).Year) SangaFabrice. All rights reserved."
             Description = @"
-MarkdownToHtmlShortcut helps configure the Windows context menu shortcut that converts Markdown files to HTML files. The module packages functions to add and remove the shortcut on the .md files right-click context menu. 
+MarkdownToHtmlShortcut helps configure the Windows context menu shortcut that converts Markdown files to HTML files. The module packages functions to add and remove the shortcut on the right-click context menu of .md files. 
 Note that it does not require administrators' privileges to run.
 → To support this project, please visit and like: $ProjectUri
 "@
