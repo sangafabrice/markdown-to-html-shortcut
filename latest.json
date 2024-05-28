@@ -1,13 +1,6 @@
 {
-  "version": "0.1.0",
+  "version": "0.2.0",
   "releaseNotes": [
-    "FEAT: Add Convert Mardkdown to HTM context menu shortcut.",
-    "BUILD: Package functions to add and remove the shortcut.",
-    "FEAT: Set NoIcon and HideConsole as options.",
-    "NoIcon specifies that no shortcut icon should be set.",
-    "HideConsole specifies that the PowerShell console window should be hidden.",
-    "STYLE: Change module icon.",
-    "FIX: Fix overwritten output html does not show in warning.",
-    "BUILD: Change repository project site name."
+    "FEAT: Add Set verb as an alias of the Install function."
   ]
 }

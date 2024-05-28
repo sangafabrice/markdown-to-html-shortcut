@@ -47,7 +47,7 @@ Note that it does not require administrators' privileges to run.
             FunctionsToExport = @((Get-Content "$Path\$RootModule").Where{ $_ -like 'Function*' -or $_ -like 'Filter*' }.ForEach{ ($_ -split ' ')[1] })
             CmdletsToExport = @()
             VariablesToExport = @()
-            AliasesToExport = @()
+            AliasesToExport = @((Get-Content "$Path\$RootModule").Where{ $_ -like 'Set-Alias*' }.ForEach{ ($_ -split ' ')[1] })
             FileList = @(
                 "$ModuleName.psd1"
                 Get-ChildItem -Recurse -Include '*MarkdownToHtml*.*','*.ico' -File -Name
