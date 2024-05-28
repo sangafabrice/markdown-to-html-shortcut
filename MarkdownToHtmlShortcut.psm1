@@ -54,9 +54,6 @@ Function Install-MarkdownToHtmlShortcut {
 }
 
 Set-Alias Set-MarkdownToHtmlShortcut Install-MarkdownToHtmlShortcut
-Set-Alias Set-MarkdownToHtmlShortcut Install-MarkdownToHtmlShortcut
-Set-Alias Set-MarkdownToHtmlShortcut Install-MarkdownToHtmlShortcut
-
 
 Function Remove-MarkdownToHtmlShortcut {
   <#
