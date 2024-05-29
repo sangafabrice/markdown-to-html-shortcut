@@ -1,8 +1,6 @@
 {
-  "version": "0.2.2",
+  "version": "0.3.0",
   "releaseNotes": [
-    "FEAT: Add Set verb as an alias of the Install function.",
-    "REFACTOR: Remove the duplicate of Set-Alias commands.",
     "FEAT: Change Set alias to function and Install function to alias"
   ]
 }
