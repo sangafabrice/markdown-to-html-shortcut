@@ -4,7 +4,7 @@ If (-not $IsWindows) {
   Throw 'Windows platform required. The script can only be executed in a Windows OS.'
 }
 
-Function Install-MarkdownToHtmlShortcut {
+Function Set-MarkdownToHtmlShortcut {
   <#
   .SYNOPSIS
   Install the context menu shortcut to convert Markdown files to HTML files.
@@ -53,7 +53,7 @@ Function Install-MarkdownToHtmlShortcut {
   Set-ItemProperty -Path $CommandKey.PSParentPath -Name 'Icon' -Value "$PSScriptRoot\shortcut-icon.ico" -Force
 }
 
-Set-Alias Set-MarkdownToHtmlShortcut Install-MarkdownToHtmlShortcut
+Set-Alias Install-MarkdownToHtmlShortcut Set-MarkdownToHtmlShortcut
 
 Function Remove-MarkdownToHtmlShortcut {
   <#
