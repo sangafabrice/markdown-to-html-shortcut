@@ -40,8 +40,8 @@ If (Test-Path ($HtmlFilePath = [System.IO.Path]::ChangeExtension($MarkdownFilePa
     [System.Windows.MessageBox]::Show(
       "The file `"$Using:HtmlFilePath`" already exists.`n`nDo you want to overwrite it?",
       'Convert Markdown to HTML',
-      4,
-      48
+      'YesNo',
+      'Exclamation'
     ) -ieq 'No'
   } | Receive-Job -Wait -AutoRemoveJob) {
       Return
