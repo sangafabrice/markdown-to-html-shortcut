@@ -1,6 +1,7 @@
 {
-  "version": "0.3.0",
+  "version": "0.3.1",
   "releaseNotes": [
-    "FEAT: Change Set alias to function and Install function to alias"
+    "FEAT: Change Set alias to function and Install function to alias",
+    "FEAT: Remove silent error and handle directory and command errors"
   ]
 }
