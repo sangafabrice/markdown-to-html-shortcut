@@ -32,43 +32,36 @@ Param (
   [ValidateScript({Test-Path $_ -PathType Leaf})]
   [string] $MarkdownFilePath    
 )
+# Call this function to show the WPF Message Box. 
+Function ShowMessageBox($Text, $Type) {
+  # Use the Job to make the added type transient.
+  If (Start-Job {
+    $DefaultType = 'Error'
+    $Type = $Using:Type ?? $DefaultType
+    Add-Type -AssemblyName PresentationFramework
+    [System.Windows.MessageBox]::Show(
+      $Using:Text,
+      'Convert Markdown to HTML',
+      $Type -eq $DefaultType ? 'OK':'YesNo',
+      $Type
+    ) -in ('No','OK')
+  } | Receive-Job -Wait -AutoRemoveJob) {  
+    Exit 1
+  }
+}
 # If the HTML file of the same base name and in the same folder as the input Mardown file exists,
 # prompt the user to choose to overwrite or cancel the conversion with a message box dialog.
 If (Test-Path ($HtmlFilePath = [System.IO.Path]::ChangeExtension($MarkdownFilePath, 'html'))) {
-  If (Start-Job {
-    Add-Type -AssemblyName PresentationFramework
-    (Test-Path $Using:HtmlFilePath -PathType Leaf) ? (
-    [System.Windows.MessageBox]::Show(
-      "The file `"$Using:HtmlFilePath`" already exists.`n`nDo you want to overwrite it?",
-      'Convert Markdown to HTML',
-      'YesNo',
-      'Exclamation'
-    ) -ieq 'No'
+    (Test-Path $HtmlFilePath -PathType Leaf) ? (
+      ShowMessageBox "The file `"$HtmlFilePath`" already exists.`n`nDo you want to overwrite it?" 'Exclamation'
     ):(
-      [System.Windows.MessageBox]::Show(
-        "`"$Using:HtmlFilePath`" cannot be overwritten because it is a directory.",
-        'Convert Markdown to HTML',
-        'OK',
-        'Error'
-      ) -ieq 'OK'      
+      ShowMessageBox "`"$HtmlFilePath`" cannot be overwritten because it is a directory."
     )
-  } | Receive-Job -Wait -AutoRemoveJob) {
-      Return
-  }
 }
 Try {
 # Conversion from Markdown to HTML.
 (ConvertFrom-Markdown $MarkdownFilePath).Html |
 Out-File $HtmlFilePath 
 } Catch {
-  Start-Job {
-    Add-Type -AssemblyName PresentationFramework
-    [void] [System.Windows.MessageBox]::Show(
-      $Args[0],
-      'Convert Markdown to HTML',
-      'OK',
-      'Error'
-    )      
-  } -ArgumentList $_.Exception.Message |
-  Receive-Job -Wait -AutoRemoveJob
+  ShowMessageBox $_.Exception.Message
 }
