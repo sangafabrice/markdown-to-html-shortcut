@@ -45,7 +45,8 @@ Function ShowMessageBox($Text, $Type) {
       $Type -eq $DefaultType ? 'OK':'YesNo',
       $Type
     ) -in ('No','OK')
-  } | Receive-Job -Wait -AutoRemoveJob) {  
+  } | Receive-Job -Wait -AutoRemoveJob) {
+    # Exit when the user clicks No or OK.
     Exit 1
   }
 }
