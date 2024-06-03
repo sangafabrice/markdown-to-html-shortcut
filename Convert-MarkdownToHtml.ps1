@@ -60,9 +60,9 @@ If (Test-Path ($HtmlFilePath = [System.IO.Path]::ChangeExtension($MarkdownFilePa
     )
 }
 Try {
-# Conversion from Markdown to HTML.
-(ConvertFrom-Markdown $MarkdownFilePath).Html |
-Out-File $HtmlFilePath 
+  # Conversion from Markdown to HTML.
+  (ConvertFrom-Markdown $MarkdownFilePath).Html |
+  Out-File $HtmlFilePath 
 } Catch {
   ShowMessageBox $_.Exception.Message
 }
