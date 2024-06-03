@@ -37,16 +37,38 @@ Param (
 If (Test-Path ($HtmlFilePath = [System.IO.Path]::ChangeExtension($MarkdownFilePath, 'html'))) {
   If (Start-Job {
     Add-Type -AssemblyName PresentationFramework
+    (Test-Path $Using:HtmlFilePath -PathType Leaf) ? (
     [System.Windows.MessageBox]::Show(
       "The file `"$Using:HtmlFilePath`" already exists.`n`nDo you want to overwrite it?",
       'Convert Markdown to HTML',
       'YesNo',
       'Exclamation'
     ) -ieq 'No'
+    ):(
+      [System.Windows.MessageBox]::Show(
+        "`"$Using:HtmlFilePath`" cannot be overwritten because it is a directory.",
+        'Convert Markdown to HTML',
+        'OK',
+        'Error'
+      ) -ieq 'OK'      
+    )
   } | Receive-Job -Wait -AutoRemoveJob) {
       Return
   }
 }
+Try {
 # Conversion from Markdown to HTML.
 (ConvertFrom-Markdown $MarkdownFilePath).Html |
-Out-File $HtmlFilePath
+Out-File $HtmlFilePath 
+} Catch {
+  Start-Job {
+    Add-Type -AssemblyName PresentationFramework
+    [void] [System.Windows.MessageBox]::Show(
+      $Args[0],
+      'Convert Markdown to HTML',
+      'OK',
+      'Error'
+    )      
+  } -ArgumentList $_.Exception.Message |
+  Receive-Job -Wait -AutoRemoveJob
+}
