@@ -47,6 +47,3 @@ Remove the shortcut menu using `Remove-MarkdownToHtmlShortcut`.
 ```PowerShell
 Remove-MarkdownToHtmlShortcut [<CommonParameters>]
 ```
-
-
-
