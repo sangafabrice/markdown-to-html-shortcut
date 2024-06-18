@@ -69,3 +69,11 @@ Note that it does not require administrators' privileges to run.
     Name = 'ModuleBuilder'
     Scriptblock = ([scriptblock]::Create((Invoke-RestMethod 'https://api.github.com/gists/387cc6063e148917a2fe5503e57b823c').files.'ModuleBuilder.psm1'.content)).GetNewClosure()
 } | ForEach-Object { New-Module @_ } | Import-Module -Force
+
+Function Set-JScriptMinified {
+    [CmdletBinding()]
+    Param()
+    ((((Get-Content ($JScriptFile = "$(Get-ModuleInstallationRoot)\Convert-MarkdownToHtml.js")) -replace '\s*// .+').
+    Where({ $_.startswith('*/') }, 'SkipUntil') -notmatch '\*/' |
+    ForEach-Object { $_.Trim() }) | Where-Object { $_ -ne '' }) -join '' -replace '\s+\+\s*','+' | Out-File $JScriptFile
+}
