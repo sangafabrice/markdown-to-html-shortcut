@@ -1,5 +1,5 @@
 # **MarkdownToHtmlShortcut**
-![Module Version](https://img.shields.io/badge/version-0.3.1-teal)
+![Module Version](https://img.shields.io/badge/version-0.3.2-teal)
 [![Publish Installer Module](https://github.com/sangafabrice/convertto-html-shortcut/actions/workflows/publish-installer-module.yaml/badge.svg)](https://github.com/sangafabrice/convertto-html-shortcut/actions/workflows/publish-installer-module.yaml)
 
 |||
@@ -47,3 +47,4 @@ Remove the shortcut menu using `Remove-MarkdownToHtmlShortcut`.
 ```PowerShell
 Remove-MarkdownToHtmlShortcut [<CommonParameters>]
 ```
+
