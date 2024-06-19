@@ -1,8 +1,9 @@
 {
-  "version": "0.3.2",
+  "version": "0.3.2.1",
   "releaseNotes": [
     "FEAT: Change Set alias to function and Install function to alias",
     "FEAT: Remove silent error and handle directory and command errors",
-    "BUILD: Minify JScript code"
+    "BUILD: Minify JScript code",
+    "TEST: Replace build.ps1 dot sourcing by code script"
   ]
 }
