@@ -40,8 +40,7 @@ Function Set-MarkdownToHtmlShortcut {
   If (Test-Path $Arguments.Path -PathType Container) {
     Set-Item @Arguments
     $CommandKey = Get-Item $Arguments.Path
-  }
-  Else {
+  } Else {
     $CommandKey = New-Item @Arguments -Force
   }
   # Set the text on the menu and the icon using the parent of the command key: ConvertToHtml.
