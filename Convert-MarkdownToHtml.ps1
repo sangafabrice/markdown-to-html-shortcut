@@ -28,7 +28,7 @@ Param (
   [string] $HtmlFilePath = [System.IO.Path]::ChangeExtension($MarkdownFilePath, 'html'),
   [switch] $OverWrite
 )
-# Call this function to show the WPF Message Box. 
+# Call this function to show the WPF Message Box.
 Function ShowMessageBox($Text, $Type) {
   # Use the Job to make the added type transient.
   If (Start-Job {
