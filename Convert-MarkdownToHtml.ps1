@@ -28,35 +28,16 @@ Param (
   [string] $HtmlFilePath = [System.IO.Path]::ChangeExtension($MarkdownFilePath, 'html'),
   [switch] $OverWrite
 )
-# Call this function to show the WPF Message Box.
-Function ShowMessageBox($Text, $Type) {
-  # Use the Job to make the added type transient.
-  If (Start-Job {
-    $DefaultType = 'Error'
-    $Type = $Using:Type ?? $DefaultType
-    Add-Type -AssemblyName PresentationFramework
-    [System.Windows.MessageBox]::Show(
-      $Using:Text,
-      'Convert Markdown to HTML',
-      $Type -eq $DefaultType ? 'OK':'YesNo',
-      $Type
-    ) -in ('No','OK')
-  } | Receive-Job -Wait -AutoRemoveJob) {
-    # Exit when the user clicks No or OK.
-    Exit 1
-  }
-}
 # If the HTML file exists, prompt the user to choose to overwrite or abort.
 If (Test-Path $HtmlFilePath -PathType Leaf) {
   If (-not $OverWrite) {
-    ShowMessageBox "The file `"$HtmlFilePath`" already exists.`n`nDo you want to overwrite it?" 'Exclamation'
+    choice.exe /C YN /N /M "The file `"$HtmlFilePath`" already exists.`nDo you want to overwrite it?`n[Y]es [N]o: "
+    If ($LASTEXITCODE -eq 2) {
+      Exit 1
+    }
   }
 } ElseIf (Test-Path $HtmlFilePath) {
-  ShowMessageBox "`"$HtmlFilePath`" cannot be overwritten because it is a directory."
+  Throw "`"$HtmlFilePath`" cannot be overwritten because it is a directory."
 }
-Try {
-  # Conversion from Markdown to HTML.
-  (ConvertFrom-Markdown $MarkdownFilePath).Html | Out-File $HtmlFilePath
-} Catch {
-  ShowMessageBox $_.Exception.Message
-}
+# Conversion from Markdown to HTML.
+(ConvertFrom-Markdown $MarkdownFilePath).Html | Out-File $HtmlFilePath
