@@ -56,8 +56,7 @@ If (Test-Path $HtmlFilePath -PathType Leaf) {
 }
 Try {
   # Conversion from Markdown to HTML.
-  (ConvertFrom-Markdown $MarkdownFilePath).Html |
-  Out-File $HtmlFilePath 
+  (ConvertFrom-Markdown $MarkdownFilePath).Html | Out-File $HtmlFilePath
 } Catch {
   ShowMessageBox $_.Exception.Message
 }
