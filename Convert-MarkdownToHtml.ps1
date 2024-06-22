@@ -9,6 +9,8 @@ Specifies the path of an existing .md Markdown file.
 .PARAMETER HtmlFilePath
 Specifies the path string of the output HTML file.
 By default it differs to the path of the input markdown file only by the extension. The parent directory and the base name are the same.
+.PARAMETER OverWrite
+Specifies that the output file should be overriden.
 .EXAMPLE
 "Here's the link to the [team session](https://fromthetechlab.blogspot.com)." > .\Readme.md
 PS> .\Convert-MarkdownToHtml .\Readme.md
@@ -23,7 +25,8 @@ Param (
   [ValidateScript({Test-Path $_ -PathType Leaf})]
   [string] $MarkdownFilePath,
   [ValidatePattern('\.html?$')]
-  [string] $HtmlFilePath = [System.IO.Path]::ChangeExtension($MarkdownFilePath, 'html')
+  [string] $HtmlFilePath = [System.IO.Path]::ChangeExtension($MarkdownFilePath, 'html'),
+  [switch] $OverWrite
 )
 # Call this function to show the WPF Message Box. 
 Function ShowMessageBox($Text, $Type) {
@@ -45,8 +48,10 @@ Function ShowMessageBox($Text, $Type) {
 }
 # If the HTML file exists, prompt the user to choose to overwrite or cancel the conversion with a message box dialog.
 If (Test-Path $HtmlFilePath) {
-    (Test-Path $HtmlFilePath -PathType Leaf) ? (
+    (Test-Path $HtmlFilePath -PathType Leaf) ? $(
+      If (-not $OverWrite) {
       ShowMessageBox "The file `"$HtmlFilePath`" already exists.`n`nDo you want to overwrite it?" 'Exclamation'
+      }
     ):(
       ShowMessageBox "`"$HtmlFilePath`" cannot be overwritten because it is a directory."
     )
