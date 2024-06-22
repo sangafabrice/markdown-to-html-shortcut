@@ -6,6 +6,9 @@ Convert a Markdown file to an HTML file.
 The script convert the specified Markdown file to an HTML file.
 .PARAMETER MarkdownFilePath
 Specifies the path of an existing .md Markdown file.
+.PARAMETER HtmlFilePath
+Specifies the path string of the output HTML file.
+By default it differs to the path of the input markdown file only by the extension. The parent directory and the base name are the same.
 .EXAMPLE
 "Here's the link to the [team session](https://fromthetechlab.blogspot.com)." > .\Readme.md
 PS> .\Convert-MarkdownToHtml .\Readme.md
@@ -18,7 +21,9 @@ Param (
   [Parameter(Mandatory)]
   [ValidatePattern('\.md$')]
   [ValidateScript({Test-Path $_ -PathType Leaf})]
-  [string] $MarkdownFilePath    
+  [string] $MarkdownFilePath,
+  [ValidatePattern('\.html?$')]
+  [string] $HtmlFilePath = [System.IO.Path]::ChangeExtension($MarkdownFilePath, 'html')
 )
 # Call this function to show the WPF Message Box. 
 Function ShowMessageBox($Text, $Type) {
@@ -38,9 +43,8 @@ Function ShowMessageBox($Text, $Type) {
     Exit 1
   }
 }
-# If the HTML file of the same base name and in the same folder as the input Markdown file exists,
-# prompt the user to choose to overwrite or cancel the conversion with a message box dialog.
-If (Test-Path ($HtmlFilePath = [System.IO.Path]::ChangeExtension($MarkdownFilePath, 'html'))) {
+# If the HTML file exists, prompt the user to choose to overwrite or cancel the conversion with a message box dialog.
+If (Test-Path $HtmlFilePath) {
     (Test-Path $HtmlFilePath -PathType Leaf) ? (
       ShowMessageBox "The file `"$HtmlFilePath`" already exists.`n`nDo you want to overwrite it?" 'Exclamation'
     ):(
