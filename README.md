@@ -1,6 +1,5 @@
 # **MarkdownToHtmlShortcut**
 ![Module Version](https://img.shields.io/badge/version-0.3.3-teal)
-[![Publish Installer Module](https://github.com/sangafabrice/convertto-html-shortcut/actions/workflows/publish-installer-module.yaml/badge.svg)](https://github.com/sangafabrice/convertto-html-shortcut/actions/workflows/publish-installer-module.yaml)
 
 </br>
 <img src='module-icon.svg' alt='Module Icon' width='90px' />
