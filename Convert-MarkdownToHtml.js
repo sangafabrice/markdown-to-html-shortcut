@@ -1,8 +1,7 @@
-﻿/*
- * Launches a hidden PowerShell Core console that executes
- * the target Convert-MarkdownToHtml.ps1 script. The Markdown file path
- * string is passed to that script as its argument.
- * @param MarkdownFilePath The specified markdown file path string.
+/** Launches a hidden PowerShell Core console that executes
+ *  the target Convert-MarkdownToHtml.ps1 script. The Markdown file path
+ *  string is passed to that script as its argument.
+ *  @param MarkdownFilePath The specified markdown file path string.
 */
 
 // @param MarkdownFilePath.
