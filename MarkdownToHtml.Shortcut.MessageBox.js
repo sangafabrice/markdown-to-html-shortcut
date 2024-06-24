@@ -1,5 +1,16 @@
-import System;
+﻿import System;
 import System.Windows;
+import System.Reflection;
+import System.Configuration.Assemblies;
+
+[assembly: AssemblyFileVersionAttribute('0.0.1.*')]
+[assembly: AssemblyInformationalVersionAttribute('1.0.0')]
+[assembly: AssemblyAlgorithmIdAttribute(AssemblyHashAlgorithm.SHA256)]
+[assembly: AssemblyCompanyAttribute('sangafabrice')]
+[assembly: AssemblyCopyrightAttribute('© 2024 sangafabrice')]
+[assembly: AssemblyCultureAttribute('en-US')]
+[assembly: AssemblyProductAttribute('MarkdownToHtml Shortcut')]
+[assembly: AssemblyTitleAttribute('MarkdownToHtml Shortcut MessageBox Library')]
 
 package MarkdownToHtml.Shortcut {
 
@@ -17,7 +28,7 @@ package MarkdownToHtml.Shortcut {
     */
     static function Show(message: String, type: MessageBoxImage): Boolean {
       // If the message notifies of an Error, the message box only displays an OK button.
-      // Otherwise, the message box displays an alternative: Yes/No buttons. 
+      // Otherwise, the message box displays an alternative: Yes/No buttons.
       var button: MessageBoxButton = type == MessageBoxImage.Error ? MessageBoxButton.OK:MessageBoxButton.YesNo;
       var result: MessageBoxResult = System.Windows.MessageBox.Show(message, title, button, type);
       return result == MessageBoxResult.No || result == MessageBoxResult.OK;

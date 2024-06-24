@@ -19,7 +19,7 @@ Function Set-MarkdownToHtmlShortcut {
     # The registry key of the command executed by the shortcut.
     Path = 'HKCU:\SOFTWARE\Classes\SystemFileAssociations\.md\shell\ConvertToHtml\Command'
     # %1 is the path to the selected mardown file to convert.
-    Value = 'wscript.exe //e:jscript "{0}\Convert-MarkdownToHtml.js" /MarkdownFilePath:"%1"' -f $PSScriptRoot
+    Value = '"{0}\Convert-MarkdownToHtml.exe" "%1"' -f $PSScriptRoot
   }
   # Overwrite the key value if it already exists.
   # Otherwise, create it.
@@ -31,7 +31,7 @@ Function Set-MarkdownToHtmlShortcut {
   }
   # Set the text on the menu and the icon using the parent of the command key: ConvertToHtml.
   Set-Item -Path $CommandKey.PSParentPath -Value 'Convert to &HTML' -Force
-  Set-ItemProperty -Path $CommandKey.PSParentPath -Name 'Icon' -Value "$PSScriptRoot\shortcut-icon.ico" -Force
+  Set-ItemProperty -Path $CommandKey.PSParentPath -Name 'Icon' -Value "$PSScriptRoot\Convert-MarkdownToHtml.exe,0" -Force
 }
 
 Function Remove-MarkdownToHtmlShortcut {

@@ -1,10 +1,21 @@
-import System;
+﻿import System;
 import System.Text;
 import System.IO;
 import System.Diagnostics;
 import System.Threading;
 import System.ComponentModel;
 import MarkdownToHtml.Shortcut;
+import System.Reflection;
+import System.Configuration.Assemblies;
+
+[assembly: AssemblyFileVersionAttribute('0.0.1.*')]
+[assembly: AssemblyInformationalVersionAttribute('1.0.0')]
+[assembly: AssemblyAlgorithmIdAttribute(AssemblyHashAlgorithm.SHA256)]
+[assembly: AssemblyCompanyAttribute('sangafabrice')]
+[assembly: AssemblyCopyrightAttribute('© 2024 sangafabrice')]
+[assembly: AssemblyCultureAttribute('en-US')]
+[assembly: AssemblyProductAttribute('MarkdownToHtml Shortcut')]
+[assembly: AssemblyTitleAttribute('MarkdownToHtml Shortcut Launcher Library')]
 
 package MarkdownToHtml.Shortcut {
 
@@ -18,8 +29,8 @@ package MarkdownToHtml.Shortcut {
     // Represents the PowerShell console host output text.
     private static var outputText: StringBuilder  = new StringBuilder();
 
-    /** Represents the string delimiting the error message thrown by the 
-     *  PowerShell child process. Undesired characters are appended as prefix 
+    /** Represents the string delimiting the error message thrown by the
+     *  PowerShell child process. Undesired characters are appended as prefix
      *  and suffix to the error messages due to the difference in Encoding.
      *  The string separate the polluted characters to the desired ones.
     */
@@ -41,8 +52,8 @@ package MarkdownToHtml.Shortcut {
       }
     }
 
-    /** Represents the handler of the event that occurs when the PowerShell process 
-     *  redirects outputs to the parent Standard Output stream. This handler observes 
+    /** Represents the handler of the event that occurs when the PowerShell process
+     *  redirects outputs to the parent Standard Output stream. This handler observes
      *  when the PowerShell process console prompts the user to overwrite the HTML file.
      *  It then propagate the prompt to the parent process that will show a Message box
      *  with the prompted text and the prompted actions to take Yes/No.
@@ -83,7 +94,7 @@ package MarkdownToHtml.Shortcut {
           // Get uniform error messages format by handling them in a catch statement.
           'catch {{ Write-Error (""{2}"" + $_.Exception.Message + ""{2}"") }}" ' +
           '"{0}" "{1}"',
-          // This suggests that the path string to the launcher will differ from the 
+          // This suggests that the path string to the launcher will differ from the
           // PowerShell shortcut target script path only by the extension.
           // They must be located in the same directory and have the same base name.
           Path.ChangeExtension(launcherExePath, 'ps1'),
