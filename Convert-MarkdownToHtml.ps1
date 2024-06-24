@@ -34,22 +34,22 @@ Param (
   [switch] $OverWrite
 )
 Process {
-# If the HTML file exists, prompt the user to choose to overwrite or abort.
-If ([File]::Exists($HtmlFilePath)) {
-  If (-not $OverWrite) {
-    Do {
-      [console]::Write("The file `"{0}`" already exists.`nDo you want to overwrite it?`n[Y]es [N]o: ", $HtmlFilePath)
-    } Until (($Answer = [console]::ReadLine()) -match '((Y(e(s)?)?)|(No?))$')
-    If ([regex]::new('No?', [RegexOptions]::IgnoreCase).IsMatch($Answer)) {
-      [environment]::Exit(1)
+  # If the HTML file exists, prompt the user to choose to overwrite or abort.
+  If ([File]::Exists($HtmlFilePath)) {
+    If (-not $OverWrite) {
+      Do {
+        [console]::Write("The file `"{0}`" already exists.`nDo you want to overwrite it?`n[Y]es [N]o: ", $HtmlFilePath)
+      } Until (($Answer = [console]::ReadLine()) -match '((Y(e(s)?)?)|(No?))$')
+      If ([regex]::new('No?', [RegexOptions]::IgnoreCase).IsMatch($Answer)) {
+        [environment]::Exit(1)
+      }
     }
+  } ElseIf ([Directory]::Exists($HtmlFilePath)) {
+    Throw "`"$HtmlFilePath`" cannot be overwritten because it is a directory."
   }
-} ElseIf ([Directory]::Exists($HtmlFilePath)) {
-  Throw "`"$HtmlFilePath`" cannot be overwritten because it is a directory."
-}
-# Create runspace and proxy variable of $MarkdownFilePath.
-$SessionState = [initialsessionstate]::CreateDefault2()
-$SessionState.Variables.Add([SessionStateVariableEntry]::new('MarkdownFilePath', $MarkdownFilePath, ''))
-# Conversion from Markdown to HTML.
-[powershell]::Create($SessionState).AddScript{ ConvertFrom-Markdown $MarkdownFilePath }.Invoke().Html | Out-File $HtmlFilePath
+  # Create runspace and proxy variable of $MarkdownFilePath.
+  $SessionState = [initialsessionstate]::CreateDefault2()
+  $SessionState.Variables.Add([SessionStateVariableEntry]::new('MarkdownFilePath', $MarkdownFilePath, ''))
+  # Conversion from Markdown to HTML.
+  [powershell]::Create($SessionState).AddScript{ ConvertFrom-Markdown $MarkdownFilePath }.Invoke().Html | Out-File $HtmlFilePath
 }
