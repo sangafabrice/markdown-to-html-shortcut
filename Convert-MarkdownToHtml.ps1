@@ -34,7 +34,7 @@ If (Test-Path $HtmlFilePath -PathType Leaf) {
     Do {
       Write-Host "The file `"$HtmlFilePath`" already exists.`nDo you want to overwrite it?`n[Y]es [N]o: " -NoNewline
     } Until (($Answer = Read-Host) -match '((Y(e(s)?)?)|(No?))$')
-    If (([console]::InputEncoding.HeaderName -eq 'ibm437' ? ($Answer.Trim() -replace '\W'):$Answer) -in @('No','N')) {
+    If ([regex]::new('No?', 'IgnoreCase').IsMatch($Answer)) {
       Exit 1
     }
   }
