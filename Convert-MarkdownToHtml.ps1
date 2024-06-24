@@ -1,4 +1,9 @@
 #Requires -Version 6.1
+using namespace System
+using namespace System.IO
+using namespace System.Text.RegularExpressions
+using namespace System.Management.Automation
+using namespace System.Management.Automation.Runspaces
 <#
 .SYNOPSIS
 Convert a Markdown file to an HTML file.
@@ -22,24 +27,29 @@ Convert a simple Readme.md file to HTML.
 Param (
   [Parameter(Mandatory)]
   [ValidatePattern('\.md$')]
-  [ValidateScript({Test-Path $_ -PathType Leaf})]
+  [ValidateScript({ [File]::Exists($_) })]
   [string] $MarkdownFilePath,
   [ValidatePattern('\.html?$')]
-  [string] $HtmlFilePath = [System.IO.Path]::ChangeExtension($MarkdownFilePath, 'html'),
+  [string] $HtmlFilePath = [Path]::ChangeExtension($MarkdownFilePath, 'html'),
   [switch] $OverWrite
 )
+Process {
 # If the HTML file exists, prompt the user to choose to overwrite or abort.
-If (Test-Path $HtmlFilePath -PathType Leaf) {
+If ([File]::Exists($HtmlFilePath)) {
   If (-not $OverWrite) {
     Do {
-      Write-Host "The file `"$HtmlFilePath`" already exists.`nDo you want to overwrite it?`n[Y]es [N]o: " -NoNewline
-    } Until (($Answer = Read-Host) -match '((Y(e(s)?)?)|(No?))$')
-    If ([regex]::new('No?', 'IgnoreCase').IsMatch($Answer)) {
-      Exit 1
+      [console]::Write("The file `"{0}`" already exists.`nDo you want to overwrite it?`n[Y]es [N]o: ", $HtmlFilePath)
+    } Until (($Answer = [console]::ReadLine()) -match '((Y(e(s)?)?)|(No?))$')
+    If ([regex]::new('No?', [RegexOptions]::IgnoreCase).IsMatch($Answer)) {
+      [environment]::Exit(1)
     }
   }
-} ElseIf (Test-Path $HtmlFilePath) {
+} ElseIf ([Directory]::Exists($HtmlFilePath)) {
   Throw "`"$HtmlFilePath`" cannot be overwritten because it is a directory."
 }
+# Create runspace and proxy variable of $MarkdownFilePath.
+$SessionState = [initialsessionstate]::CreateDefault2()
+$SessionState.Variables.Add([SessionStateVariableEntry]::new('MarkdownFilePath', $MarkdownFilePath, ''))
 # Conversion from Markdown to HTML.
-(ConvertFrom-Markdown $MarkdownFilePath).Html | Out-File $HtmlFilePath
+[powershell]::Create($SessionState).AddScript{ ConvertFrom-Markdown $MarkdownFilePath }.Invoke().Html | Out-File $HtmlFilePath
+}
