@@ -31,8 +31,10 @@ Param (
 # If the HTML file exists, prompt the user to choose to overwrite or abort.
 If (Test-Path $HtmlFilePath -PathType Leaf) {
   If (-not $OverWrite) {
-    choice.exe /C YN /N /M "The file `"$HtmlFilePath`" already exists.`nDo you want to overwrite it?`n[Y]es [N]o: "
-    If ($LASTEXITCODE -eq 2) {
+    Do {
+      Write-Host "The file `"$HtmlFilePath`" already exists.`nDo you want to overwrite it?`n[Y]es [N]o: " -NoNewline
+    } Until (($Answer = Read-Host) -match '((Y(e(s)?)?)|(No?))$')
+    If (([console]::InputEncoding.HeaderName -eq 'ibm437' ? ($Answer.Trim() -replace '\W'):$Answer) -in @('No','N')) {
       Exit 1
     }
   }
