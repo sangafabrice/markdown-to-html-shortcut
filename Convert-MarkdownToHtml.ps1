@@ -15,7 +15,7 @@ Specifies the path of an existing .md Markdown file.
 Specifies the path string of the output HTML file.
 By default it differs to the path of the input markdown file only by the extension. The parent directory and the base name are the same.
 .PARAMETER OverWrite
-Specifies that the output file should be overriden.
+Specifies that the output file should be overridden.
 .EXAMPLE
 "Here's the link to the [team session](https://fromthetechlab.blogspot.com)." > .\Readme.md
 PS> .\Convert-MarkdownToHtml .\Readme.md
@@ -39,7 +39,7 @@ Process {
     If (-not $OverWrite) {
       Do {
         [console]::Write("The file `"{0}`" already exists.`nDo you want to overwrite it?`n[Y]es [N]o: ", $HtmlFilePath)
-      } Until (($Answer = [console]::ReadLine()) -match '((Y(e(s)?)?)|(No?))$')
+      } While (-not [regex]::new('((Y(e(s)?)?)|(No?))$', [RegexOptions]::IgnoreCase).IsMatch(($Answer = [console]::ReadLine())))
       If ([regex]::new('No?', [RegexOptions]::IgnoreCase).IsMatch($Answer)) {
         [environment]::Exit(1)
       }
@@ -51,5 +51,7 @@ Process {
   $SessionState = [initialsessionstate]::CreateDefault2()
   $SessionState.Variables.Add([SessionStateVariableEntry]::new('MarkdownFilePath', $MarkdownFilePath, ''))
   # Conversion from Markdown to HTML.
-  [powershell]::Create($SessionState).AddScript{ ConvertFrom-Markdown $MarkdownFilePath }.Invoke().Html | Out-File $HtmlFilePath
+  $runspace = [powershell]::Create($SessionState)
+  [File]::WriteAllLines($HtmlFilePath, $runspace.AddScript{ (ConvertFrom-Markdown $MarkdownFilePath).Html }.Invoke())
+  $runspace.Dispose()
 }
