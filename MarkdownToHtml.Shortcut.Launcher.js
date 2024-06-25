@@ -79,14 +79,14 @@ package MarkdownToHtml.Shortcut {
         String.Format(
           '-nop -ex ByPass -cwa ' +
           // The execution of the Target Script and its markdown file argument.
-          '"try{{ & $args[0] -MarkdownFilePath $args[1] }}' +
+          '"try{{ Import-Module $args[0]; Convert-MarkdownToHtml -MarkdownFilePath $args[1] }}' +
           // Get uniform error messages format by handling them in a catch statement.
           'catch {{ Write-Error (""{2}"" + $_.Exception.Message + ""{2}"") }}" ' +
-          '"{0}" "{1}"',
+          '"{0}\\MarkdownToHtml.Shortcut.ConvertCmdlet.dll" "{1}"',
           // This suggests that the path string to the launcher will differ from the
-          // PowerShell shortcut target script path only by the extension.
-          // They must be located in the same directory and have the same base name.
-          Path.ChangeExtension(launcherExePath, 'ps1'),
+          // PowerShell shortcut target script path only by the file name.
+          // They must be located in the same directory.
+          Path.GetDirectoryName(launcherExePath),
           markdownPath,
           errMessageDelim
         )
