@@ -33,8 +33,6 @@ Function Set-MarkdownToHtmlShortcut {
   Set-Item -Path $CommandKey.PSParentPath -Value 'Convert to &HTML' -Force
 }
 
-Set-Alias Install-MarkdownToHtmlShortcut Set-MarkdownToHtmlShortcut
-
 Function Remove-MarkdownToHtmlShortcut {
   <#
   .SYNOPSIS
