@@ -11,7 +11,7 @@
   // We change the extension of the current JScript script
   // to the extension of the PowerShell script because
   // they have the same base name.
-  WScript.ScriptFullName.replace(/\.js$/,'.ps1') + '" "' +
+  WScript.ScriptFullName.replace(/\.js$/i,'.ps1') + '" "' +
   // The input Markdown file path.
   WScript.Arguments.Named('MarkdownFilePath') + '"',
   0 // Hide the console window.
