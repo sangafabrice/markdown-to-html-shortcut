@@ -11,7 +11,7 @@
 
 Configure the shortcut menu with the functions below.
 ```PowerShell
-Set-MarkdownToHtmlShortcut [-NoIcon] [-HideConsole] [<CommonParameters>]
+Set-MarkdownToHtmlShortcut [<CommonParameters>]
 Remove-MarkdownToHtmlShortcut [<CommonParameters>]
 ```
 <br />
