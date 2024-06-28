@@ -41,11 +41,11 @@ Function ShowMessageBox($Text, $Type) {
 # If the HTML file of the same base name and in the same folder as the input Markdown file exists,
 # prompt the user to choose to overwrite or cancel the conversion with a message box dialog.
 If (Test-Path ($HtmlFilePath = [System.IO.Path]::ChangeExtension($MarkdownFilePath, 'html'))) {
-    (Test-Path $HtmlFilePath -PathType Leaf) ? (
-      ShowMessageBox "The file `"$HtmlFilePath`" already exists.`n`nDo you want to overwrite it?" 'Exclamation'
-    ):(
-      ShowMessageBox "`"$HtmlFilePath`" cannot be overwritten because it is a directory."
-    )
+  (Test-Path $HtmlFilePath -PathType Leaf) ? (
+    ShowMessageBox "The file `"$HtmlFilePath`" already exists.`n`nDo you want to overwrite it?" 'Exclamation'
+  ):(
+    ShowMessageBox "`"$HtmlFilePath`" cannot be overwritten because it is a directory."
+  )
 }
 Try {
   # Conversion from Markdown to HTML.
