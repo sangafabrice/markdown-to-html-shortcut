@@ -52,8 +52,6 @@ Function Set-MarkdownToHtmlShortcut {
   Set-ItemProperty -Path $CommandKey.PSParentPath -Name 'Icon' -Value "$PSScriptRoot\shortcut-icon.ico" -Force
 }
 
-Set-Alias Install-MarkdownToHtmlShortcut Set-MarkdownToHtmlShortcut
-
 Function Remove-MarkdownToHtmlShortcut {
   <#
   .SYNOPSIS
