@@ -29,7 +29,7 @@ Function Set-MarkdownToHtmlShortcut {
     Value = $(
         If ($HideConsole) {
           # The JScript script to hide the PowerShell console window is executed in GUI mode (WScript).
-          'wscript.exe //e:jscript "{0}\Convert-MarkdownToHtml.js" /MarkdownFilePath:"%1"'
+          'wscript.exe "{0}\Convert-MarkdownToHtml.vbs" /MarkdownFilePath:"%1"'
         } Else {
           'pwsh.exe -nol -ep Bypass -noni -nop -w Hidden -f "{0}\Convert-MarkdownToHtml.ps1" -MarkdownFilePath "%1"'
         }
