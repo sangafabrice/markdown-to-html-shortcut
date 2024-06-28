@@ -19,7 +19,7 @@ Function Set-MarkdownToHtmlShortcut {
     # The registry key of the command executed by the shortcut.
     Path = 'HKCU:\SOFTWARE\Classes\SystemFileAssociations\.md\shell\ConvertToHtml\Command'
     # %1 is the path to the selected mardown file to convert.
-    Value = 'wscript.exe //e:jscript "{0}\Convert-MarkdownToHtml.js" /MarkdownFilePath:"%1"' -f $PSScriptRoot
+    Value = 'wscript.exe "{0}\Convert-MarkdownToHtml.vbs" /MarkdownFilePath:"%1"' -f $PSScriptRoot
   }
   # Overwrite the key value if it already exists. Otherwise, create it.
   If (Test-Path $Arguments.Path -PathType Container) {
