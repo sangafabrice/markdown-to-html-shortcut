@@ -35,8 +35,7 @@ Function Set-MarkdownToHtmlShortcut {
         }
       ) -f $PSScriptRoot
   }
-  # Overwrite the key value if it already exists.
-  # Otherwise, create it.
+  # Overwrite the key value if it already exists. Otherwise, create it.
   If (Test-Path $Arguments.Path -PathType Container) {
     Set-Item @Arguments
     $CommandKey = Get-Item $Arguments.Path
