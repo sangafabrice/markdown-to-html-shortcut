@@ -3,7 +3,7 @@
 [![Publish Installer Module](https://github.com/sangafabrice/convertto-html-shortcut/actions/workflows/publish-installer-module.yaml/badge.svg)](https://github.com/sangafabrice/convertto-html-shortcut/actions/workflows/publish-installer-module.yaml)
 
 </br>
-<img src='module-icon.svg' alt='Module Icon' width='90px' />
+<img src='https://rawcdn.githack.com/sangafabrice/convertto-html-shortcut/38c15d63a6220f088d017624ff7173cb8be92015/module-icon.svg' alt='Module Icon' width='90px' />
 
 [![Downloads](https://img.shields.io/powershellgallery/dt/MarkdownToHtmlShortcut?color=blue&label=On%20PowerShell%20Gallery%20%E2%AC%87%EF%B8%8F)](https://www.powershellgallery.com/packages/MarkdownToHtmlShortcut)
 
