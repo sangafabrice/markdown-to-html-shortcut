@@ -7,7 +7,8 @@
 (new ActiveXObject('WScript.Shell')).Run(
   // pwsh.exe is used because the ConvertFrom-Markdown
   // is available by default with PowerShell Core.
-  'pwsh.exe -nop -noni -f "' +
+  // Set execution policy to Bypass.
+  'pwsh.exe -nop -ex Bypass -noni -f "' +
   // We change the extension of the current JScript script
   // to the extension of the PowerShell script because
   // they have the same base name.
