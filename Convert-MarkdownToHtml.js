@@ -14,6 +14,5 @@
   WScript.ScriptFullName.replace(/\.js$/,'.ps1') + '" "' +
   // The input Markdown file path.
   WScript.Arguments.Named('MarkdownFilePath') + '"',
-  0, // Hide the console window.
-  false // Start a non blocking process.
+  0 // Hide the console window.
 );
