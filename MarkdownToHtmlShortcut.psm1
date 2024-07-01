@@ -18,7 +18,11 @@ Function Set-MarkdownToHtmlShortcut {
   If (-not (Test-Path ($PwshLink = "$PSScriptRoot\Convert-MarkdownToHtml.lnk") -PathType Leaf)) {
     (New-Object -ComObject WScript.Shell).CreateShortcut($PwshLink) |
     ForEach-Object {
+      # pwsh.exe is used because the ConvertFrom-Markdown is available by default with PowerShell Core.
+      # Using the file name suggests that the PowerShell Core directory should be on the PATH.
       $_.TargetPath = 'pwsh.exe'
+      # The command is partial because it does not include the markdown file path string.
+      # The markdown file path string will be input when calling the shortcut link.
       $_.Arguments = '-nop -ep Bypass -noni -nop -w Hidden -f "{0}\Convert-MarkdownToHtml.ps1" -MarkdownFilePath' -f $PSScriptRoot
       $_.IconLocation = "$PSScriptRoot\shortcut-icon.ico"
       $_.Save()
