@@ -22,18 +22,17 @@ Param (
 )
 # Call this function to show the WPF Message Box. 
 Function ShowMessageBox($Text, $Type) {
-  # Use the Job to make the added type transient.
-  If (Start-Job {
-    $DefaultType = 'Error'
-    $Type = $Using:Type ?? $DefaultType
-    Add-Type -AssemblyName PresentationFramework
+  $DefaultType = 'Error'
+  $Type = $Type ?? $DefaultType
+  Add-Type -AssemblyName PresentationFramework
+  If (
     [System.Windows.MessageBox]::Show(
-      $Using:Text,
+      $Text,
       'Convert Markdown to HTML',
       $Type -eq $DefaultType ? 'OK':'YesNo',
       $Type
     ) -in ('No','OK')
-  } | Receive-Job -Wait -AutoRemoveJob) {
+  ) {
     # Exit when the user clicks No or OK.
     Exit 1
   }
