@@ -5,9 +5,19 @@ function Launcher() { }
 
 /** Represents the command line argument.
  *  @param MarkdownFilePath The specified markdown file path string.
+ *  @param RunLink specifies that the shortcut should be run.
 */
 function CommandLineArgument() { }
-CommandLineArgument.MarkdownFilePath = WScript.Arguments.Named('MarkdownFilePath');
+CommandLineArgument.MarkdownFilePath = WSH.Arguments.Named('MarkdownFilePath');
+CommandLineArgument.RunLink = WSH.Arguments.Named.Exists('RunLink');
+
+/** Change the extension of this launcher script.
+ *  @param extension the extension to replace with.
+ *  @return the launcher script string path with the extension specified.
+*/
+function scriptChangeExtension(extension) {
+  return WScript.ScriptFullName.replace(/\.js$/i,extension);
+}
 
 /** Represents the constants of the script.
  *  @param SHELL the shell COM object.
@@ -37,9 +47,18 @@ CONSTANT.PROMPT_OVERWRITE = 'Do you want to overwrite it?';
 // to the error messages due to the difference in Encoding.
 // The string separate the polluted characters from the message.
 CONSTANT.ERROR_MESSAGE_DELIM = '--';
-// We change the extension of the current JScript script to the extension
-// of the PowerShell script because they have the same name except the extension.
-CONSTANT.TARGET_SCRIPT = WScript.ScriptFullName.replace(/\.js$/i,'.ps1');
+CONSTANT.TARGET_SCRIPT = scriptChangeExtension('.ps1');
+
+if (CommandLineArgument.RunLink) {
+  CONSTANT.SHELL.Run(
+    // The shortcut link to this launcher with no RunLink argument.
+    '"' + scriptChangeExtension('.lnk') + '" ' +
+    // The input Markdown file path.
+    '"/MarkdownFilePath:' + CommandLineArgument.MarkdownFilePath + '"',
+    0 // Hide the console window.
+  );
+  WSH.Quit();
+}
 
 /** Reprensents the PowerShell console output data from the Standard output.
  *  @param LineCount the rank of the output data line returned.

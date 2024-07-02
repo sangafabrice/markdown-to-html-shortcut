@@ -14,12 +14,29 @@ Function Set-MarkdownToHtmlShortcut {
   [CmdletBinding()]
   Param ()
 
+  # Create the shortcut link to PowerShell Core assembly.
+  If (-not (Test-Path ($PwshLink = "$PSScriptRoot\Convert-MarkdownToHtml.lnk") -PathType Leaf)) {
+    (New-Object -ComObject WScript.Shell).CreateShortcut($PwshLink) |
+    ForEach-Object {
+      # pwsh.exe is used because the ConvertFrom-Markdown is available by default with PowerShell Core.
+      # Using the file name suggests that the PowerShell Core directory should be on the PATH.
+      $_.TargetPath = 'wscript.exe'
+      # The command is partial because it does not include the markdown file path string.
+      # The markdown file path string will be input when calling the shortcut link.
+      $_.Arguments = '//e:jscript "{0}\Convert-MarkdownToHtml.js"' -f $PSScriptRoot
+      $_.IconLocation = "$PSScriptRoot\shortcut-icon.ico"
+      $_.Save()
+    }
+    If (-not (Test-Path $PwshLink -PathType Leaf)) {
+      Throw [System.IO.FileNotFoundException]::New($Null, $PwshLink)
+    }
+  }
   # The arguments to Set-Item and New-Item cmdlets.
   $Arguments = @{
     # The registry key of the command executed by the shortcut.
     Path = 'HKCU:\SOFTWARE\Classes\SystemFileAssociations\.md\shell\ConvertToHtml\Command'
     # %1 is the path to the selected mardown file to convert.
-    Value = 'wscript.exe //e:jscript "{0}\Convert-MarkdownToHtml.js" /MarkdownFilePath:"%1"' -f $PSScriptRoot
+    Value = 'wscript.exe //e:jscript "{0}\Convert-MarkdownToHtml.js" /MarkdownFilePath:"%1" /RunLink' -f $PSScriptRoot
   }
   # Overwrite the key value if it already exists.
   # Otherwise, create it.
