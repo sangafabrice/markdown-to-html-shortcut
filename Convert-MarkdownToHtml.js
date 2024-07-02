@@ -3,7 +3,7 @@
 */
 function Launcher() { }
 
-/** Reprensents the command line argument.
+/** Represents the command line argument.
  *  @param MarkdownFilePath The specified markdown file path string.
 */
 function CommandLineArgument() { }
@@ -126,7 +126,7 @@ Launcher.Start(CONSTANT.SHELL.Exec(
   // The runner command. pwsh.exe is used because the
   // ConvertFrom-Markdown is available by default with PowerShell Core.
   // Using the file name only suggests that PowerShell Core
-  //  installation directory is on the PATH.
+  // installation directory is on the PATH.
   'pwsh.exe -nop -ex ByPass -w Hidden -cwa ' +
   // The execution of the Target Script and its markdown file argument.
   '"try{ & $args[0] -MarkdownFilePath $args[1] }' +
