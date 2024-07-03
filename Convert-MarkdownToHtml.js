@@ -1,39 +1,14 @@
-/** Launches a hidden PowerShell Core console that executes
- *  the target Convert-MarkdownToHtml.ps1 script.
-*/
-function Launcher() { }
-
-/** Represents the command line argument.
- *  @param MarkdownFilePath The specified markdown file path string.
- *  @param RunLink specifies that the shortcut should be run.
-*/
-function CommandLineArgument() { }
 CommandLineArgument.MarkdownFilePath = WSH.Arguments.Named('MarkdownFilePath');
 CommandLineArgument.RunLink = WSH.Arguments.Named.Exists('RunLink');
 
-/** Change the extension of this launcher script.
- *  @param extension the extension to replace with.
- *  @return the launcher script string path with the extension specified.
-*/
-function scriptChangeExtension(extension) {
-  return WScript.ScriptFullName.replace(/\.js$/i,extension);
+CONSTANT.SHELL = new ActiveXObject('WScript.Shell');
+CONSTANT.LAUNCHER_SHORTCUT = scriptChangeExtension('.lnk');
+
+if (CommandLineArgument.RunLink) {
+  CONSTANT.SHELL.Run('"' + CONSTANT.LAUNCHER_SHORTCUT + '" "/MarkdownFilePath:' + CommandLineArgument.MarkdownFilePath + '"');
+  quit();
 }
 
-/** Represents the constants of the script.
- *  @param SHELL the shell COM object.
- *  @param MESSAGE_BOX_TITLE the message box title.
- *  @param ERROR_MESSAGE the error message type of the MessageBox.
- *  @param EXCLAMATION_MESSAGE the exclamation message type of the MessageBox.
- *  @param YESNO_BUTTON the Yes and No buttons are shown in the MessageBox.
- *  @param OK_BUTTON the OK button is shown in the MessageBox.
- *  @param OK_POPUPRESULT the MessageBox button clicked is OK.
- *  @param NO_POPUPRESULT the MessageBox button clicked is No.
- *  @param PROMPT_OVERWRITE the PowerShell child process output line that is the overwrite prompt message.
- *  @param ERROR_MESSAGE_DELIM the string delimiting the error message thrown by the PowerShell console.
- *  @param TARGET_SCRIPT the path to the shortcut target PowerShell script (.ps1).
-*/
-function CONSTANT() { }
-CONSTANT.SHELL = new ActiveXObject('WScript.Shell');
 CONSTANT.MESSAGE_BOX_TITLE = 'Convert to HTML';
 CONSTANT.NO_MESSAGE_TIMEOUT = 0;
 CONSTANT.ERROR_MESSAGE = 16;
@@ -49,22 +24,6 @@ CONSTANT.PROMPT_OVERWRITE = 'Do you want to overwrite it?';
 CONSTANT.ERROR_MESSAGE_DELIM = '--';
 CONSTANT.TARGET_SCRIPT = scriptChangeExtension('.ps1');
 
-if (CommandLineArgument.RunLink) {
-  CONSTANT.SHELL.Run(
-    // The shortcut link to this launcher with no RunLink argument.
-    '"' + scriptChangeExtension('.lnk') + '" ' +
-    // The input Markdown file path.
-    '"/MarkdownFilePath:' + CommandLineArgument.MarkdownFilePath + '"',
-    0 // Hide the console window.
-  );
-  WSH.Quit();
-}
-
-/** Reprensents the PowerShell console output data from the Standard output.
- *  @param LineCount the rank of the output data line returned.
- *  @param Message the string that will store output text line by line.
-*/
-function OutputData() { }
 OutputData.LineCount = 0;
 OutputData.Message = '';
 
@@ -73,7 +32,7 @@ OutputData.Message = '';
  *  @param type the type of message 'Exclamation'/'Error'.
  *  @return true if the user clicked on the OK\No button, false otherwise.
 */
-function MessageBox(message, type) {
+MessageBox.Show = function(message, type) {
   // Set the default error message to Error message.
   if (type == undefined) {
       type = CONSTANT.ERROR_MESSAGE;
@@ -93,7 +52,7 @@ function MessageBox(message, type) {
  *  @param pwshExe the PowerShell process or child process.
  *  @param outData the line of text output on the PowerShell console host.
 */
-Launcher.StdOutHandler = function(pwshExe, outData) {
+Launcher.HandleStdOut = function(pwshExe, outData) {
   // If the console host output a line, append it to the message text.
   if (outData.length > 0) {
     // Add a new line to the message text when it is not empty.
@@ -105,7 +64,7 @@ Launcher.StdOutHandler = function(pwshExe, outData) {
     // data line output the overwrite prompt message.
     if (outData == CONSTANT.PROMPT_OVERWRITE) {
       // Get the answer of the user and write it to the process console host.
-      var promptAnswer = MessageBox(OutputData.Message, CONSTANT.EXCLAMATION_MESSAGE) ? 'N':'Y';
+      var promptAnswer = MessageBox.Show(OutputData.Message, CONSTANT.EXCLAMATION_MESSAGE) ? 'N':'Y';
       pwshExe.StdIn.WriteLine(promptAnswer);
     }
   }
@@ -118,12 +77,12 @@ Launcher.StdOutHandler = function(pwshExe, outData) {
  *  This is why the pwshExe (the child process) parameter is unused.
  *  @param errData the error message object thrown by the powershell process.
 */
-Launcher.StdErrHandler = function(errData) {
+Launcher.HandleStdErr = function(errData) {
   if (errData.length > 0) {
     // Remove the polluted characters from the error message data text.
     var delimIndex = errData.indexOf(CONSTANT.ERROR_MESSAGE_DELIM);
     var delimLastIndex = errData.lastIndexOf(CONSTANT.ERROR_MESSAGE_DELIM);
-    MessageBox(errData.substring(delimIndex+2, delimLastIndex));
+    MessageBox.Show(errData.substring(delimIndex+2, delimLastIndex));
   }
 }
 
@@ -133,11 +92,11 @@ Launcher.StdErrHandler = function(errData) {
 Launcher.Start = function(pwshExe) {
   // Wait for the process to complete or throw an error.
   while (!pwshExe.Status && !pwshExe.ExitCode) {
-    Launcher.StdOutHandler(pwshExe, pwshExe.StdOut.ReadLine());
+    Launcher.HandleStdOut(pwshExe, pwshExe.StdOut.ReadLine());
   }
   // If the process throws an error.
   if (pwshExe.ExitCode) {
-    Launcher.StdErrHandler(pwshExe.StdErr.ReadAll());
+    Launcher.HandleStdErr(pwshExe.StdErr.ReadAll());
   }
 }
 
@@ -156,6 +115,57 @@ Launcher.Start(CONSTANT.SHELL.Exec(
   '"' + CommandLineArgument.MarkdownFilePath + '"'
 ));
 
-// Release COM object.
-CONSTANT.SHELL = null;
-delete CONSTANT.SHELL;
+quit();
+
+/** Represents the command line argument.
+ *  @param MarkdownFilePath The specified markdown file path string.
+ *  @param RunLink specifies that the shortcut should be run.
+*/
+function CommandLineArgument() { }
+
+/** Represents the constants of the script.
+ *  @param SHELL the shell COM object.
+ *  @param MESSAGE_BOX_TITLE the message box title.
+ *  @param ERROR_MESSAGE the error message type of the MessageBox.
+ *  @param EXCLAMATION_MESSAGE the exclamation message type of the MessageBox.
+ *  @param YESNO_BUTTON the Yes and No buttons are shown in the MessageBox.
+ *  @param OK_BUTTON the OK button is shown in the MessageBox.
+ *  @param OK_POPUPRESULT the MessageBox button clicked is OK.
+ *  @param NO_POPUPRESULT the MessageBox button clicked is No.
+ *  @param PROMPT_OVERWRITE the PowerShell child process output line that is the overwrite prompt message.
+ *  @param ERROR_MESSAGE_DELIM the string delimiting the error message thrown by the PowerShell console.
+ *  @param TARGET_SCRIPT the path to the shortcut target PowerShell script (.ps1).
+ *  @param LAUNCHER_SHORTCUT The shortcut link to this launcher with no RunLink argument.
+*/
+function CONSTANT() { }
+
+/** Launches a hidden PowerShell Core console that executes
+ *  the target Convert-MarkdownToHtml.ps1 script.
+*/
+function Launcher() { }
+
+/** Represents the PowerShell console output data from the Standard output.
+ *  @param LineCount the rank of the output data line returned.
+ *  @param Message the string that will store output text line by line.
+*/
+function OutputData() { }
+
+/** Represents a simplified Message Box object.
+*/
+function MessageBox() { }
+
+/** Change the extension of this launcher script.
+ *  @param extension the extension to replace with.
+ *  @return the launcher script string path with the extension specified.
+*/
+function scriptChangeExtension(extension) {
+  return WScript.ScriptFullName.replace(/\.js$/i,extension);
+}
+
+/** Release COM object and quit.
+*/
+function quit() {
+  CONSTANT.SHELL = null;
+  delete CONSTANT.SHELL;
+  WSH.Quit();
+}
