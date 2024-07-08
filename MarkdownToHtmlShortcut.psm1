@@ -40,7 +40,7 @@ Function Set-MarkdownToHtmlShortcut {
   If (-not (Test-Path ($ConvertExe = Set-ConvertMd2HtmlExtension '.exe') -PathType Leaf)) {
     $EnvPath = $Env:Path
     $Env:Path = "$Env:windir\Microsoft.NET\Framework$(If ([Environment]::Is64BitOperatingSystem) { '64' })\v4.0.30319\;$Env:Path"
-    jsc.exe /nologo /target:winexe /out:$ConvertExe $(Set-ConvertMd2HtmlExtension '.js')
+    vbc.exe /nologo /target:winexe /out:$ConvertExe $(Set-ConvertMd2HtmlExtension '.vb')
     $Env:Path = $EnvPath
     If (-not (Test-Path $ConvertExe -PathType Leaf)) {
       Throw [FileNotFoundException]::New($Null, $ConvertExe)
