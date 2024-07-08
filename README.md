@@ -10,7 +10,7 @@
 
 **Requirements:** Windows 10/11, Powershell Core.
 
-[![](https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi_jKVC1HFtkt14ya1FPgdeZqpY6IYJ7Hk6Emko_uvcDYtK0gpZIeq_3tMz4yvXFfwPOw-C25ZnoB0nGuK-Hg3KyBLSUULIbBUl2tVFoqMS2q-jcP7Ces4J8NG4m127BSAPuUSZBnThT0nQsBKyrQPXhSr-3WoKKoVyjc8KseW4N-DgcEMKoGdndz0jYQKq/s1600/change-console-icon.png)](https://fromthetechlab.blogspot.com/2024/07/change-console-icon-using-shortcuts.html)
+[![](https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgZxpmtp9MbJwN7eErBHam9JAwxGgOk_lIfgG8f3D07G_ofECYHYyXmuUkV26Bz1n4U2RpDA6PFNy33hl2naCfIyaMvO3FrLMVeEnYgvAodgkFdwEFyDRtnKLOABlGeBWSOkDWzJD6fUZit6rPFz4-_WaVSfh71ckPkmtaHmoZts74e72qKvil6JRRTbWg_/s1600/hide-console-window-with-net-fx.png)](https://fromthetechlab.blogspot.com/2024/07/hide-console-window-with-dotnet-framework.html)
 </br>
 
 ## **Setup**
