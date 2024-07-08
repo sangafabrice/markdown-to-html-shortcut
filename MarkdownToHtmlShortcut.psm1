@@ -15,9 +15,11 @@ Function Set-MarkdownToHtmlShortcut {
   [CmdletBinding()]
   Param ()
 
+  # Set the extension of the file with base name Convert-MarkdownToHtml and return full path.
   Function Private:Set-ConvertMd2HtmlExtension([string] $Extension) {
     Return "$PSScriptRoot\Convert-MarkdownToHtml$Extension"
   }
+  # Store the shortcut link path string which base name is the name as the root module.
   $ShortcutLinkIcon = [Path]::ChangeExtension($PSCommandPath, '.ico')
   # Create the shortcut link to PowerShell Core assembly.
   If (-not (Test-Path ($PwshLink = Set-ConvertMd2HtmlExtension '.lnk') -PathType Leaf)) {
@@ -37,10 +39,11 @@ Function Set-MarkdownToHtmlShortcut {
       Throw [FileNotFoundException]::New($Null, $PwshLink)
     }
   }
+  # Compile the launcher source code to a windows application.
   If (-not (Test-Path ($ConvertExe = Set-ConvertMd2HtmlExtension '.exe') -PathType Leaf)) {
     $EnvPath = $Env:Path
     $Env:Path = "$Env:windir\Microsoft.NET\Framework$(If ([Environment]::Is64BitOperatingSystem) { '64' })\v4.0.30319\;$Env:Path"
-    jsc.exe /nologo /target:winexe /out:$ConvertExe $(Set-ConvertMd2HtmlExtension '.js')
+    csc.exe /nologo /target:winexe /out:$ConvertExe $(Set-ConvertMd2HtmlExtension '.cs')
     $Env:Path = $EnvPath
     If (-not (Test-Path $ConvertExe -PathType Leaf)) {
       Throw [FileNotFoundException]::New($Null, $ConvertExe)
