@@ -22,18 +22,17 @@ import System.Diagnostics;
 import MarkdownToHtml.Shortcut;
 @end
 import System.Reflection;
-import System.Configuration.Assemblies;
 
 // File and product attributes.
-[assembly: AssemblyFileVersionAttribute(@vMajor + '.' + @vMinor + '.' + @vBuild + '.' + @vRevision)]
-[assembly: AssemblyInformationalVersionAttribute(@vMajor + '.' + @vMinor + '.' + @vBuild + '.' + @vRevision)]
-[assembly: AssemblyCompanyAttribute('sangafabrice')]
-[assembly: AssemblyCopyrightAttribute('© 2024 sangafabrice')]
-[assembly: AssemblyProductAttribute('MarkdownToHtml Shortcut')]
+[assembly: AssemblyFileVersion(@vMajor + '.' + @vMinor + '.' + @vBuild + '.' + @vRevision)]
+[assembly: AssemblyInformationalVersion(@vMajor + '.' + @vMinor + '.' + @vBuild + '.' + @vRevision)]
+[assembly: AssemblyCompany('sangafabrice')]
+[assembly: AssemblyCopyright('© 2024 sangafabrice')]
+[assembly: AssemblyProduct('MarkdownToHtml Shortcut')]
 @if (@DllBuild)
-[assembly: AssemblyTitleAttribute('MarkdownToHtml Shortcut Launcher Library')]
+[assembly: AssemblyTitle('MarkdownToHtml Shortcut Launcher Library')]
 // Part of the assembly name.
-[assembly: AssemblyVersionAttribute(@vMajor + '.' + @vMinor + '.' + @vBuild + '.' + @vRevision)]
+[assembly: AssemblyVersion(@vMajor + '.' + @vMinor + '.' + @vBuild + '.' + @vRevision)]
 
 package MarkdownToHtml.Shortcut {
 
@@ -65,7 +64,7 @@ package MarkdownToHtml.Shortcut {
   }
 }
 @else
-[assembly: AssemblyTitleAttribute('Convert Markdown to HTML Launcher')]
+[assembly: AssemblyTitle('Convert Markdown to HTML Launcher')]
 
 Launcher.Start(Environment.GetCommandLineArgs());
 @end
