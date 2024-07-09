@@ -11,9 +11,16 @@ Function Set-MarkdownToHtmlShortcut {
   Install the context menu shortcut to convert Markdown files to HTML files.
   .DESCRIPTION
   This function creates a context menu shortcut to convert Markdown files to HTML files by setting up the Windows Registry.
+  .PARAMETER NoIcon
+  Specifies that the shortcut icon should not be configured.
+  .PARAMETER HideConsole
+  Specifies that the PowerShell Core console window should be hidden when clicking the shortcut.
   #>
   [CmdletBinding()]
-  Param ()
+  Param (
+    [switch] $NoIcon,
+    [switch] $HideConsole
+  )
 
   # Set the extension of the file with base name Convert-MarkdownToHtml and return full path.
   Function Private:Set-ConvertMd2HtmlExtension([string] $Extension) {
@@ -39,15 +46,13 @@ Function Set-MarkdownToHtmlShortcut {
       Throw [FileNotFoundException]::New($Null, $PwshLink)
     }
   }
-  # Compile the launcher source code to a windows application.
-  If (-not (Test-Path ($ConvertExe = Set-ConvertMd2HtmlExtension '.exe') -PathType Leaf)) {
-    $EnvPath = $Env:Path
-    $Env:Path = "$Env:windir\Microsoft.NET\Framework$(If ([Environment]::Is64BitOperatingSystem) { '64' })\v4.0.30319\;$Env:Path"
-    jsc.exe /nologo /target:winexe /out:$ConvertExe $(Set-ConvertMd2HtmlExtension '.js')
-    $Env:Path = $EnvPath
-    If (-not (Test-Path $ConvertExe -PathType Leaf)) {
-      Throw [FileNotFoundException]::New($Null, $ConvertExe)
-    }
+  # Compile the launcher source code to a library and a windows application.
+  $Env:Path = "$Env:windir\Microsoft.NET\Framework$(If ([Environment]::Is64BitOperatingSystem) { '64' })\v4.0.30319\;$(($EnvPath = $Env:Path))"
+  jsc.exe /nologo /target:library $(If ($HideConsole) { '/define:HideConsole' }) /define:DllBuild /out:$(($LauncherDll = [Path]::ChangeExtension($PSCommandPath, '.Launcher.dll'))) $(($JsScript = Set-ConvertMd2HtmlExtension '.js'))
+  jsc.exe /nologo /target:winexe /reference:$LauncherDll /out:$(($ConvertExe = Set-ConvertMd2HtmlExtension '.exe')) $JsScript
+  $Env:Path = $EnvPath
+  If (-not (Test-Path $ConvertExe -PathType Leaf)) {
+    Throw [FileNotFoundException]::New($Null, $ConvertExe)
   }
   # The arguments to Set-Item and New-Item cmdlets.
   $Arguments = @{
@@ -65,6 +70,10 @@ Function Set-MarkdownToHtmlShortcut {
   }
   # Set the text on the menu and the icon using the parent of the command key: ConvertToHtml.
   Set-Item -Path $CommandKey.PSParentPath -Value 'Convert to &HTML' -Force
+  If ($NoIcon) {
+    Remove-ItemProperty -Path $CommandKey.PSParentPath -Name 'Icon' -Force -ErrorAction SilentlyContinue
+    Return
+  }
   Set-ItemProperty -Path $CommandKey.PSParentPath -Name 'Icon' -Value $ShortcutLinkIcon -Force
 }
 
