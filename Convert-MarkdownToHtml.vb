@@ -1,8 +1,18 @@
-Option Explicit On
+﻿Option Explicit On
 
 Imports System
 Imports System.IO
 Imports System.Diagnostics
+Imports System.Reflection
+Imports System.Configuration.Assemblies
+
+' File and product attributes.
+<Assembly: AssemblyFileVersionAttribute("0.4.0.0")>
+<Assembly: AssemblyInformationalVersionAttribute("0.4.0.0")>
+<Assembly: AssemblyCompanyAttribute("sangafabrice")>
+<Assembly: AssemblyCopyrightAttribute("© 2024 sangafabrice")>
+<Assembly: AssemblyProductAttribute("MarkdownToHtml Shortcut")>
+<Assembly: AssemblyTitleAttribute("Convert Markdown to HTML Launcher")>
 
 Module MarkdownToHtmlShortcut
   ''' <summary>Launch a hidden Command Prompt that runs the shortcut link.</summary>
@@ -16,7 +26,9 @@ Module MarkdownToHtmlShortcut
       "cmd.exe",
       String.Format("/d /c """"""{0}"""" """"{1}""""""",LinkPath,MarkdownPath)
     )
+    #If HIDE_CONSOLE Then
     PwshStartInfo.WindowStyle = ProcessWindowStyle.Hidden
+    #End if
     Process.Start(PwshStartInfo)
   End Sub
 End Module
