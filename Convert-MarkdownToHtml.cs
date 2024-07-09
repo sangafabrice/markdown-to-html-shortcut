@@ -2,15 +2,14 @@
 using System.IO;
 using System.Diagnostics;
 using System.Reflection;
-using System.Configuration.Assemblies;
 
 // File and product attributes.
-[assembly: AssemblyFileVersionAttribute("0.4.0.0")]
-[assembly: AssemblyInformationalVersionAttribute("0.4.0.0")]
-[assembly: AssemblyCompanyAttribute("sangafabrice")]
-[assembly: AssemblyCopyrightAttribute("© 2024 sangafabrice")]
-[assembly: AssemblyProductAttribute("MarkdownToHtml Shortcut")]
-[assembly: AssemblyTitleAttribute("Convert Markdown to HTML Launcher")]
+[assembly: AssemblyFileVersion("0.4.0.0")]
+[assembly: AssemblyInformationalVersion("0.4.0.0")]
+[assembly: AssemblyCompany("sangafabrice")]
+[assembly: AssemblyCopyright("© 2024 sangafabrice")]
+[assembly: AssemblyProduct("MarkdownToHtml Shortcut")]
+[assembly: AssemblyTitle("Convert Markdown to HTML Launcher")]
 
 class ConvertMarkdownToHtml
 {
