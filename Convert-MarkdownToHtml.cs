@@ -1,6 +1,16 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Diagnostics;
+using System.Reflection;
+using System.Configuration.Assemblies;
+
+// File and product attributes.
+[assembly: AssemblyFileVersionAttribute("0.4.0.0")]
+[assembly: AssemblyInformationalVersionAttribute("0.4.0.0")]
+[assembly: AssemblyCompanyAttribute("sangafabrice")]
+[assembly: AssemblyCopyrightAttribute("© 2024 sangafabrice")]
+[assembly: AssemblyProductAttribute("MarkdownToHtml Shortcut")]
+[assembly: AssemblyTitleAttribute("Convert Markdown to HTML Launcher")]
 
 class ConvertMarkdownToHtml
 {
@@ -18,7 +28,9 @@ class ConvertMarkdownToHtml
         args[0]
       )
     );
+    #if HIDE_CONSOLE
     PwshStartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+    #endif
     Process.Start(PwshStartInfo);
   }
 }
