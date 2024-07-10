@@ -1,4 +1,8 @@
-﻿using System;
+﻿/**
+ * Use conditional compilation HIDE_CONSOLE symbol for
+ * specifying that Hidden is the window style.
+*/
+using System;
 using System.IO;
 using System.Diagnostics;
 using System.Reflection;
