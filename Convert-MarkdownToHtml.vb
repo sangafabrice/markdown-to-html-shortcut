@@ -1,4 +1,6 @@
-﻿Option Explicit On
+﻿''' Use conditional compilation HIDE_CONSOLE symbol for
+''' specifying that Hidden is the window style.
+Option Explicit On
 
 Imports System
 Imports System.IO
