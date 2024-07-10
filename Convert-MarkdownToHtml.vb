@@ -4,15 +4,14 @@ Imports System
 Imports System.IO
 Imports System.Diagnostics
 Imports System.Reflection
-Imports System.Configuration.Assemblies
 
 ' File and product attributes.
-<Assembly: AssemblyFileVersionAttribute("0.4.0.0")>
-<Assembly: AssemblyInformationalVersionAttribute("0.4.0.0")>
-<Assembly: AssemblyCompanyAttribute("sangafabrice")>
-<Assembly: AssemblyCopyrightAttribute("© 2024 sangafabrice")>
-<Assembly: AssemblyProductAttribute("MarkdownToHtml Shortcut")>
-<Assembly: AssemblyTitleAttribute("Convert Markdown to HTML Launcher")>
+<Assembly: AssemblyFileVersion("0.4.0.0")>
+<Assembly: AssemblyInformationalVersion("0.4.0.0")>
+<Assembly: AssemblyCompany("sangafabrice")>
+<Assembly: AssemblyCopyright("© 2024 sangafabrice")>
+<Assembly: AssemblyProduct("MarkdownToHtml Shortcut")>
+<Assembly: AssemblyTitle("Convert Markdown to HTML Launcher")>
 
 Module MarkdownToHtmlShortcut
   ''' <summary>Launch a hidden Command Prompt that runs the shortcut link.</summary>
