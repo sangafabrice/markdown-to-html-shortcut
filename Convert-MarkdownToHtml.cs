@@ -1,19 +1,14 @@
-﻿/**
- * Use conditional compilation HIDE_CONSOLE symbol for
- * specifying that Hidden is the window style.
-*/
-using System;
+﻿using System;
 using System.IO;
 using System.Diagnostics;
 using System.Reflection;
 
-// File and product attributes.
-[assembly: AssemblyFileVersion("0.4.0.0")]
-[assembly: AssemblyInformationalVersion("0.4.0.0")]
-[assembly: AssemblyCompany("sangafabrice")]
-[assembly: AssemblyCopyright("© 2024 sangafabrice")]
-[assembly: AssemblyProduct("MarkdownToHtml Shortcut")]
 [assembly: AssemblyTitle("Convert Markdown to HTML Launcher")]
+[assembly: AssemblyProduct("MarkdownToHtml Shortcut")]
+[assembly: AssemblyInformationalVersion("0.4.0.0")]
+[assembly: AssemblyCopyright("© 2024 sangafabrice")]
+[assembly: AssemblyCompany("sangafabrice")]
+[assembly: AssemblyVersion("0.4.0.0")]
 
 class ConvertMarkdownToHtml
 {
@@ -31,6 +26,8 @@ class ConvertMarkdownToHtml
         args[0]
       )
     );
+    // HIDE_CONSOLE conditional compilation symbol for
+    // specifying that the window style should be Hidden.
     #if HIDE_CONSOLE
     PwshStartInfo.WindowStyle = ProcessWindowStyle.Hidden;
     #endif
