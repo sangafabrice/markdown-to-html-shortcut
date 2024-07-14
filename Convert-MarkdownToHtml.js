@@ -1,70 +1,40 @@
-﻿/**
- * Use conditional compilation to separate the windows application and the library and
- * set version Major, Minor, Build and Revision using the set directive at one place.
- * @DllBuild symbol specifying that the assembly is a library.
- * @HideConsole symbol specifying that Hidden is the window style.
- * @vMajor carries the the Major part of the version.
- * @vMinor carries the the Minor part of the version.
- * @vBuild carries the the Build part of the version.
- * @vRevision carries the the Revision part of the version.
-*/
 @cc_on
-@set @vMajor = 0
-@set @vMinor = 4
-@set @vBuild = 0
-@set @vRevision = 0
+@set @MAJOR = 0
+@set @MINOR = 4
+@set @BUILD = 0
+@set @REVISION = 0
 
 import System;
-@if (@DllBuild)
 import System.IO;
 import System.Diagnostics;
-@else
-import MarkdownToHtml.Shortcut;
-@end
 import System.Reflection;
 
-// File and product attributes.
-[assembly: AssemblyFileVersion(@vMajor + '.' + @vMinor + '.' + @vBuild + '.' + @vRevision)]
-[assembly: AssemblyInformationalVersion(@vMajor + '.' + @vMinor + '.' + @vBuild + '.' + @vRevision)]
-[assembly: AssemblyCompany('sangafabrice')]
-[assembly: AssemblyCopyright('© 2024 sangafabrice')]
-[assembly: AssemblyProduct('MarkdownToHtml Shortcut')]
-@if (@DllBuild)
-[assembly: AssemblyTitle('MarkdownToHtml Shortcut Launcher Library')]
-// Part of the assembly name.
-[assembly: AssemblyVersion(@vMajor + '.' + @vMinor + '.' + @vBuild + '.' + @vRevision)]
-
-package MarkdownToHtml.Shortcut {
-
-  /**
-   * Represents the launcher of the shortcut link.
-  */
-  class Launcher {
-    
-    /**
-     * Launch a hidden Command Prompt that runs the shortcut link.
-     * @param args are the command line arguments.
-    */
-    static function Start(args: String[]) {
-      var pwshStartInfo: ProcessStartInfo = new ProcessStartInfo(
-        'cmd.exe',
-        String.Format(
-          '/d /c """{0}"" ""{1}"""',
-          // The link path the same as the process path except the extension.
-          Path.ChangeExtension(args[0],'.lnk'),
-          // The input markdown file path passed as argument to the link.
-          args[1]
-        )
-      );
-      @if (@HideConsole)
-      pwshStartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-      @end
-      Process.Start(pwshStartInfo);
-    }
-  }
-}
-@else
 [assembly: AssemblyTitle('Convert Markdown to HTML Launcher')]
+[assembly: AssemblyProduct('MarkdownToHtml Shortcut')]
+[assembly: AssemblyInformationalVersion(@MAJOR + '.' + @MINOR + '.' + @BUILD + '.' + @REVISION)]
+[assembly: AssemblyCopyright('\u00A9 2024 sangafabrice')]
+[assembly: AssemblyCompany('sangafabrice')]
+[assembly: AssemblyVersion(@MAJOR + '.' + @MINOR + '.' + @BUILD + '.' + @REVISION)]
 
-Launcher.Start(Environment.GetCommandLineArgs());
+/**
+ * Launch a hidden Command Prompt that runs the shortcut link.
+ * @param args are the command line arguments.
+*/
+var args: String[] = Environment.GetCommandLineArgs();
+
+var pwshStartInfo: ProcessStartInfo = new ProcessStartInfo(
+  'cmd.exe',
+  String.Format(
+    '/d /c """{0}"" ""{1}"""',
+    // The link path the same as the process path except the extension.
+    Path.ChangeExtension(args[0],'.lnk'),
+    // The input markdown file path passed as argument to the link.
+    args[1]
+  )
+);
+// HIDE_CONSOLE conditional compilation symbol for
+// specifying that the window style should be Hidden.
+@if (@HIDE_CONSOLE)
+pwshStartInfo.WindowStyle = ProcessWindowStyle.Hidden;
 @end
+Process.Start(pwshStartInfo);
