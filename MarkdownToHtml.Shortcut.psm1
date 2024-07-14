@@ -48,7 +48,8 @@ Function Set-MarkdownToHtmlShortcut {
   }
   # Compile the launcher source code to a windows application.
   $Env:Path = "$Env:windir\Microsoft.NET\Framework$(If ([Environment]::Is64BitOperatingSystem) { '64' })\v4.0.30319\;$(($EnvPath = $Env:Path))"
-  vbc.exe /nologo /target:winexe $(If ($HideConsole) { '/define:HIDE_CONSOLE' }) /out:$(($ConvertExe = Set-ConvertMd2HtmlExtension '.exe')) $(Set-ConvertMd2HtmlExtension '.vb')
+  vbc.exe /nologo /target:library $(If ($HideConsole) { '/define:HIDE_CONSOLE' }) /define:DLL_LIBRARY /out:$(($LauncherDll = [Path]::ChangeExtension($PSCommandPath, '.Launcher.dll'))) $(($VbScript = Set-ConvertMd2HtmlExtension '.vb'))
+  vbc.exe /nologo /target:winexe /reference:$LauncherDll /out:$(($ConvertExe = Set-ConvertMd2HtmlExtension '.exe')) $VbScript
   $Env:Path = $EnvPath
   If (-not (Test-Path $ConvertExe -PathType Leaf)) {
     Throw [FileNotFoundException]::New($Null, $ConvertExe)
