@@ -1,19 +1,16 @@
-﻿''' Use conditional compilation HIDE_CONSOLE symbol for
-''' specifying that Hidden is the window style.
-Option Explicit On
+﻿Option Explicit On
 
 Imports System
 Imports System.IO
 Imports System.Diagnostics
 Imports System.Reflection
 
-' File and product attributes.
-<Assembly: AssemblyFileVersion("0.4.0.0")>
-<Assembly: AssemblyInformationalVersion("0.4.0.0")>
-<Assembly: AssemblyCompany("sangafabrice")>
-<Assembly: AssemblyCopyright("© 2024 sangafabrice")>
-<Assembly: AssemblyProduct("MarkdownToHtml Shortcut")>
 <Assembly: AssemblyTitle("Convert Markdown to HTML Launcher")>
+<Assembly: AssemblyProduct("MarkdownToHtml Shortcut")>
+<Assembly: AssemblyInformationalVersion("0.4.0.0")>
+<Assembly: AssemblyCopyright("© 2024 sangafabrice")>
+<Assembly: AssemblyCompany("sangafabrice")>
+<Assembly: AssemblyVersion("0.4.0.0")>
 
 Module MarkdownToHtmlShortcut
   ''' <summary>Launch a hidden Command Prompt that runs the shortcut link.</summary>
@@ -27,6 +24,8 @@ Module MarkdownToHtmlShortcut
       "cmd.exe",
       String.Format("/d /c """"""{0}"""" """"{1}""""""",LinkPath,MarkdownPath)
     )
+    ' HIDE_CONSOLE conditional compilation symbol for
+    ' specifying that the window style should be Hidden.
     #If HIDE_CONSOLE Then
     PwshStartInfo.WindowStyle = ProcessWindowStyle.Hidden
     #End if
