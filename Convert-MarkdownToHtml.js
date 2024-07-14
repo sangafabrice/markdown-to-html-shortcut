@@ -5,9 +5,13 @@
 @set @REVISION = 0
 
 import System;
-import System.IO;
-import System.Diagnostics;
 import System.Reflection;
+@if (@DLL_LIBRARY)
+  import System.Diagnostics;
+@else
+import System.IO;
+import MarkdownToHtml.Shortcut;
+@end
 
 [assembly: AssemblyTitle('Convert Markdown to HTML Launcher')]
 [assembly: AssemblyProduct('MarkdownToHtml Shortcut')]
@@ -16,25 +20,43 @@ import System.Reflection;
 [assembly: AssemblyCompany('sangafabrice')]
 [assembly: AssemblyVersion(@MAJOR + '.' + @MINOR + '.' + @BUILD + '.' + @REVISION)]
 
-/**
- * Launch a hidden Command Prompt that runs the shortcut link.
- * @param args are the command line arguments.
-*/
-var args: String[] = Environment.GetCommandLineArgs();
+// DLL_LIBRARY conditional compilation symbol for
+// specifying that the assembly is the library.
+@if (@DLL_LIBRARY)
+[assembly: AssemblyTitle('MarkdownToHtml Shortcut Launcher Library')]
 
-var pwshStartInfo: ProcessStartInfo = new ProcessStartInfo(
-  'cmd.exe',
-  String.Format(
-    '/d /c """{0}"" ""{1}"""',
-    // The link path the same as the process path except the extension.
-    Path.ChangeExtension(args[0],'.lnk'),
-    // The input markdown file path passed as argument to the link.
-    args[1]
-  )
+package MarkdownToHtml.Shortcut {
+  /**
+   * Represents the launcher of the shortcut link.
+  */
+  public class Launcher {
+    /**
+     * Launch a hidden Command Prompt that runs the shortcut link.
+     * @param ShortcutPath is the shortcut link path to target shortcut menu script.
+     * @param MarkdownPath is the markdown path input as argument to the shortcut link.
+    */
+    public static function Start(ShortcutPath: String, MarkdownPath: String) {
+      var pwshStartInfo: ProcessStartInfo = new ProcessStartInfo(
+        'cmd.exe',
+        String.Format('/d /c """{0}"" ""{1}"""',ShortcutPath,MarkdownPath)
+      );
+      // HIDE_CONSOLE conditional compilation symbol for
+      // specifying that the window style should be Hidden.
+      @if (@HIDE_CONSOLE)
+      pwshStartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+      @end
+      Process.Start(pwshStartInfo);
+    }
+  }
+}
+@else
+[assembly: AssemblyTitle('Convert Markdown to HTML Launcher')]
+
+// The command line arguments.
+var args: String[] = Environment.GetCommandLineArgs();
+// Call the Launcher.Start method.
+Launcher.Start(
+  Path.ChangeExtension(args[0],'.lnk'),
+  args[1]
 );
-// HIDE_CONSOLE conditional compilation symbol for
-// specifying that the window style should be Hidden.
-@if (@HIDE_CONSOLE)
-pwshStartInfo.WindowStyle = ProcessWindowStyle.Hidden;
 @end
-Process.Start(pwshStartInfo);
