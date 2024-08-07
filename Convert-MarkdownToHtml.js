@@ -19,11 +19,12 @@
  * The Windows Script Host Shell COM object RegRead method reads the
  * PowerShell Core path string from the Registry. 
  * The Windows Script Host Shell COM object CreateShortcut method
- * lists the properties of the intermediate shortcut link.
+ * creates the intermediate shortcut link in the TEMP folder.
  * The shortcut link sets a custom icon for the PowerShell Core
  * window instead of the proprietary icon.
  * The shortcut link lists a partial list of arguments
  * completed with the markdown path string.
+ * The FileSystem COM object creates and delete de shortcut link.
  */
 
 /**
@@ -31,12 +32,15 @@
  * @constant {string}
  */
 var PWSH_KEY = 'HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\App Paths\\pwsh.exe\\';
+/** @constant {string} */
+var TEMP_PATH = (new ActiveXObject('WScript.Shell')).ExpandEnvironmentStrings('%TEMP%')
 
 /**
  * Read the script execution arguments.
  * @typedef {object} args
  * @param {string} MarkdownPath is the input markdown path argument.
  * @param {boolean} RunLink specifies to run the shortcut link.
+ * @param {string} LinkName is the name of the link restarting the launcher.
  */
 var args = {
   MarkdownPath: WSH.Arguments.Named('MarkdownPath'),
@@ -47,6 +51,9 @@ if (args.RunLink) {
   StartWith(args.MarkdownPath);
   WSH.Quit();
 }
+
+/** @property @memberof args */
+args.LinkName = WSH.Arguments.Named('LinkName')
 
 /**
  * Represents the markdown conversion message box.
@@ -240,18 +247,25 @@ var ConversionWatcher = (function() {
 
 (new ConversionWatcher(args.MarkdownPath)).Start();
 
+DeleteLink(args.LinkName);
+
 /**
  * Start the shortcut target PowerShell script with
- * the path of the selected markdown file as an argument.
+ * the path of the selected markdown file and the link
+ * name as the arguments.
  * @param {string} markdown is the input markdown path argument.
  */
 function StartWith(markdown) {
-  var link = ChangeScriptExtension('.lnk');
+  var linkName = (new ActiveXObject('Scriptlet.TypeLib')).Guid.substr(1, 36).toLowerCase() + '.tmp.lnk'
+  var link = TEMP_PATH + '\\' + linkName;
   var shell = new ActiveXObject('WScript.Shell');
-  if (!IsLinkReady(shell.CreateShortcut(link))) {
-    return;
-  }
-  shell.Run(GetPathArgument(link) + ' /MarkdownPath:' + GetPathArgument(markdown));
+  var shortcut = shell.CreateShortcut(link);
+  shortcut.TargetPath = WSH.FullName;
+  shortcut.Arguments = GetPathArgument(WSH.ScriptFullName) + ' /MarkdownPath:' +
+    GetPathArgument(markdown) + ' /LinkName:' + linkName;
+  shortcut.IconLocation = ChangeScriptExtension(".ico");
+  shortcut.Save();
+  shell.Run(GetPathArgument(link));
 }
 
 /**
@@ -284,4 +298,12 @@ function IsLinkReady(link) {
  */ 
 function GetPathArgument(file) {
   return '"' + file + '"';
+}
+
+/**
+ * Delete the shortcut link from the TEMP folder.
+ * @param {string} linkName is the link file name.
+ */
+function DeleteLink(linkName) {
+  (new ActiveXObject('Scripting.FileSystemObject')).DeleteFile(TEMP_PATH + "\\" + linkName, true);
 }
