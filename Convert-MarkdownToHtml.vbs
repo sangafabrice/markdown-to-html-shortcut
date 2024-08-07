@@ -11,8 +11,15 @@
 ''' The ConvertFrom-Markdown cmdlet requires PowerShell Core (pwsh.exe).
 ''' The Windows Script Host Shell COM object RegRead method reads the
 ''' PowerShell Core path string from the Registry.
+''' The Windows Script Host Shell COM object CreateShortcut method
+''' lists the properties of the intermediate shortcut link.
+''' The shortcut link sets a custom icon for the PowerShell Core
+''' window instead of the proprietary icon.
+''' The shortcut link lists a partial list of arguments
+''' completed with the markdown path string.
 ''' </remarks>
 ''' <param name="MarkdownPath">The input markdown path argument.</param>
+Option Explicit
 
 ' The registry key stores the path to the PowerShell Core application.
 Const PWSH_KEY = "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\pwsh.exe\"
@@ -27,12 +34,12 @@ StartWith WScript.Arguments.Named("MarkdownPath")
 ''' </summary>
 ''' <param name="strMarkdown">The input markdown path argument.</param>
 Sub StartWith(ByVal strMarkdown)
+  Dim strLink: strLink = ChangeScriptExtension(".lnk")
   With CreateObject("WScript.Shell")
-    .Run _
-      GetPathArgument(.RegRead(PWSH_KEY)) & _
-      " -nop -ep Bypass -noni -f " & _
-      GetPathArgument(ChangeScriptExtension(".ps1")) & " " & _
-      GetPathArgument(strMarkdown), WINDOW_STYLE_HIDDEN
+    If Not IsLinkReady(.CreateShortcut(strLink)) Then
+      Exit Sub
+    End If
+    .Run GetPathArgument(strLink) & " " & GetPathArgument(strMarkdown), WINDOW_STYLE_HIDDEN
   End With
 End Sub
 
@@ -50,6 +57,23 @@ Function ChangeScriptExtension(ByVal strExtension)
     .Pattern = "\.vbs$"
     .IgnoreCase = True
     ChangeScriptExtension = .Replace(WScript.ScriptFullName, strExtension)
+  End With
+End Function
+
+''' <summary>
+''' Check the link target command.
+''' </summary>
+''' <param name="objLink">The shortcut link.</param>
+''' <returns>True if the target command is as expected, false otherwise.</returns>
+Function IsLinkReady(ByVal objLink)
+  With objLink
+    IsLinkReady = Not StrComp( _
+      .TargetPath & " " & .Arguments, _
+      CreateObject("WScript.Shell").RegRead(PWSH_KEY) & _
+      " -nol -ep Bypass -noni -nop -w Hidden -f " & _
+      GetPathArgument(ChangeScriptExtension(".ps1")) & " -MarkdownPath", _
+      vbTextCompare _
+    )
   End With
 End Function
 
