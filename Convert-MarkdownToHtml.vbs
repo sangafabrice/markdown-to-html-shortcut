@@ -11,8 +11,15 @@
 ''' The ConvertFrom-Markdown cmdlet requires PowerShell Core (pwsh.exe).
 ''' The Windows Script Host Shell COM object RegRead method reads the
 ''' PowerShell Core path string from the Registry.
+''' The Shell Automation Service COM grand-child object GetLink
+''' lists the properties of the intermediate shortcut link.
+''' The shortcut link sets a custom icon for the PowerShell Core
+''' window instead of the proprietary icon.
+''' The shortcut link lists a partial list of arguments
+''' completed with the markdown path string.
 ''' </remarks>
 ''' <param name="MarkdownPath">The input markdown path argument.</param>
+Option Explicit
 
 ' The registry key stores the path to the PowerShell Core application.
 Const PWSH_KEY = "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\pwsh.exe\"
@@ -27,11 +34,15 @@ StartWith WScript.Arguments.Named("MarkdownPath")
 ''' </summary>
 ''' <param name="strMarkdown">The input markdown path argument.</param>
 Sub StartWith(ByVal strMarkdown)
-  CreateObject("Shell.Application").ShellExecute _
-    CreateObject("WScript.Shell").RegRead(PWSH_KEY), _
-    "-nop -ep Bypass -noni -f " & _
-    GetPathArgument(ChangeScriptExtension(".ps1")) & " " & _
-    GetPathArgument(strMarkdown),,, WINDOW_STYLE_HIDDEN
+  Dim strLink: strLink = ChangeScriptExtension(".lnk")
+  Dim strLinkDirName, strLinkFileName
+  SplitPath strLink, strLinkDirName, strLinkFileName
+  With CreateObject("Shell.Application")
+    If Not IsLinkReady(.Namespace(strLinkDirName).ParseName(strLinkFileName).GetLink) Then
+      Exit Sub
+    End If
+    .ShellExecute strLink, " " & GetPathArgument(strMarkdown),,, WINDOW_STYLE_HIDDEN
+  End With
 End Sub
 
 ''' <summary>
@@ -50,6 +61,35 @@ Function ChangeScriptExtension(ByVal strExtension)
     ChangeScriptExtension = .Replace(WScript.ScriptFullName, strExtension)
   End With
 End Function
+
+''' <summary>
+''' Check the link target command.
+''' </summary>
+''' <param name="objLink">The shortcut link.</param>
+''' <returns>True if the target command is as expected, false otherwise.</returns>
+Function IsLinkReady(ByVal objLink)
+  With objLink
+    IsLinkReady = Not StrComp( _
+      .Path & " " & .Arguments, _
+      CreateObject("WScript.Shell").RegRead(PWSH_KEY) & _
+      " -nol -ep Bypass -noni -nop -w Hidden -f " & _
+      GetPathArgument(ChangeScriptExtension(".ps1")) & " -MarkdownPath", _
+      vbTextCompare _
+    )
+  End With
+End Function
+
+''' <summary>
+''' Split the file path into its directory path and name.
+''' </summary>
+''' <param name="strFilePath">The file full path.</param>
+''' <param name="strDirName">The output directory full path string.</param>
+''' <param name="strFileName">The output file name.</param>
+Sub SplitPath(ByVal strFilePath, strDirName, strFileName)
+  Dim intDelimLastIndex: intDelimLastIndex = InStrRev(strFilePath, "\")
+  strDirName = Left(strFilePath, intDelimLastIndex - 1)
+  strFileName = Right(strFilePath, Len(strFilePath) - intDelimLastIndex)
+End Sub
 
 ''' <summary>
 ''' Double-quote the file path to make it command-ready.
