@@ -2,7 +2,7 @@
 .SYNOPSIS
 Convert a Markdown file to an HTML file.
 .DESCRIPTION
-The script converts the specified Markdown file to an HTML file. It shows an overwrite prompt window when the HTML already exists. It also displays thrown error messages in a message box and exits without further operation.
+The script converts the specified Markdown file to an HTML file. It shows an overwrite prompt when the HTML already exists.
 .PARAMETER MarkdownPath
 Specifies the path of an existing .md Markdown file.
 .PARAMETER HtmlFilePath
@@ -12,7 +12,7 @@ By default, the output HTML file has the same parent directory and base name as 
 Specifies that the output file should be overriden.
 .EXAMPLE
 "Here's the link to the [team session](https://fromthetechlab.blogspot.com)." > .\Readme.md
-PS> .\Convert-MarkdownToHtml .\Readme.md
+PS> Convert-MarkdownToHtml .\Readme.md
 PS> Get-Content .\Readme.html
 <p>Here's the link to the <a href="https://fromthetechlab.blogspot.com">team session</a>.</p>
 #>
@@ -31,36 +31,25 @@ Param (
   [switch] $OverWrite
 )
 
-# Show the specified text message in a WPF Message Box.
-# The message type specifies the icon and buttons to display.
-Function ShowMessageBox($Message, $HtmlPath, $MessageType) {
-  $DefaultType = 'Error'
-  Add-Type -AssemblyName PresentationFramework
-  If (
-    [MessageBox]::Show(
-      ($Message -f $HtmlPath),
-      'Convert Markdown to HTML',
-      # If the message type is Error, the box shows an OK button.
-      # If the message type is Exclamation, the box shows a Yes and a No button.
-      ($MessageType = $MessageType ?? $DefaultType) -eq $DefaultType ? 'OK':'YesNo',
-      $MessageType
-    ) -in ('No','OK')
-  ) {
-    # Exit when the user clicks No or OK.
-    Exit 1
-  }
-}
 # Handle exceptions when the HTML file already exists or the output path is a directory.
 If (Test-Path $HtmlPath -PathType Leaf) {
   If (-not $OverWrite) {
-    ShowMessageBox ('The file "{0}" already exists.' + "`n`nDo you want to overwrite it?") $HtmlPath 'Exclamation'
+    # Private variable to copy LASTEXITCODE value.
+    $Private:LASTEXITCODE = $LASTEXITCODE
+    Write-Host ('The file "{0}" already exists.' -f $HtmlPath)
+    Write-Host 'Do you want to overwrite it?'
+    C:\Windows\System32\choice.exe /C YN /N /M '[Y]es [N]o: '
+    # Exit when the user chooses No.
+    If ($Global:LASTEXITCODE -eq 2) {
+      # Remove impact of choice.exe on LASTEXITCODE.
+      $Global:LASTEXITCODE = $Private:LASTEXITCODE
+      Return
+    }
+    # Remove impact of choice.exe on LASTEXITCODE.
+    $Global:LASTEXITCODE = $Private:LASTEXITCODE
   }
 } ElseIf (Test-Path $HtmlPath) {
-  ShowMessageBox '"{0}" cannot be overwritten because it is a directory.' $HtmlPath
+  Throw ('"{0}" cannot be overwritten because it is a directory.' -f $HtmlPath)
 }
-Try {
-  # Conversion from Markdown to HTML.
-  (ConvertFrom-Markdown $MarkdownPath).Html | Out-File $HtmlPath
-} Catch {
-  ShowMessageBox $_.Exception.Message
-}
+# Conversion from Markdown to HTML.
+(ConvertFrom-Markdown $MarkdownPath).Html | Out-File $HtmlPath
