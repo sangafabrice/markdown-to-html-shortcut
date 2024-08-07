@@ -9,6 +9,12 @@
  * The ConvertFrom-Markdown cmdlet requires PowerShell Core (pwsh.exe).
  * The Windows Script Host Shell COM object RegRead method reads the
  * PowerShell Core path string from the Registry.
+ * The Windows Script Host Shell COM object CreateShortcut method
+ * lists the properties of the intermediate shortcut link.
+ * The shortcut link sets a custom icon for the PowerShell Core
+ * window instead of the proprietary icon.
+ * The shortcut link lists a partial list of arguments
+ * completed with the markdown path string.
  * @param {string} MarkdownPath is the input markdown path argument.
  */
 
@@ -31,13 +37,12 @@ StartWith(WSH.Arguments.Named('MarkdownPath'));
  * @param {string} markdown is the input markdown path argument.
  */
 function StartWith(markdown) {
+  var link = ChangeScriptExtension('.lnk');
   var shell = new ActiveXObject('WScript.Shell');
-  shell.Run(
-    GetPathArgument(shell.RegRead(PWSH_KEY)) +
-    ' -nop -ep Bypass -noni -f ' +
-    GetPathArgument(ChangeScriptExtension('.ps1')) + ' ' +
-    GetPathArgument(markdown), WINDOW_STYLE_HIDDEN
-  );
+  if (!IsLinkReady(shell.CreateShortcut(link))) {
+    return
+  }
+  shell.Run(GetPathArgument(link) + ' ' + GetPathArgument(markdown), WINDOW_STYLE_HIDDEN);
 }
 
 /**
@@ -49,6 +54,20 @@ function StartWith(markdown) {
  */
 function ChangeScriptExtension(extension) {
   return WSH.ScriptFullName.replace(/\.js$/i, extension);
+}
+
+/**
+ * Check the link target command.
+ * @param {object} link is the shortcut link.
+ * @param {string} link.TargetPath is the path to the runner.
+ * @param {string} link.Arguments is the target command line list of arguments.
+ * @returns {boolean} True if the target command is as expected, false otherwise.
+ */
+function IsLinkReady(link) {
+  return (link.TargetPath + ' ' + link.Arguments).toLowerCase() == 
+    ((new ActiveXObject('WScript.Shell')).RegRead(PWSH_KEY) +
+    ' -nol -ep Bypass -noni -nop -w Hidden -f ' +
+    GetPathArgument(ChangeScriptExtension('.ps1')) + ' -MarkdownPath').toLowerCase();
 }
 
 /**
