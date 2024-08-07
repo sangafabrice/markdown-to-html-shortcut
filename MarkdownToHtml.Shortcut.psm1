@@ -23,17 +23,19 @@ Function Set-MarkdownToHtmlShortcut {
   }
   # Store the shortcut link path string which base name is the name as the root module.
   $ShortcutLinkIcon = [Path]::ChangeExtension($PSCommandPath, '.ico')
-  # Create the shortcut link to PowerShell Core assembly.
+  # Store the WScript.EXE full path string.
+  $WscriptExe = 'c:\windows\system32\wscript.exe'
+  # Store the path to the launcher script.
+  $LauncherScript = Set-ConvertMd2HtmlExtension '.vbs'
+  # Create the shortcut link to WSH Wscript application.
   (New-Object -ComObject WScript.Shell).CreateShortcut((Set-ConvertMd2HtmlExtension '.lnk')) |
   ForEach-Object {
-    # pwsh.exe is used because the ConvertFrom-Markdown is available by default with PowerShell Core.
-    # The registry key that stores the path to the PowerShell Core application.
-    $_.TargetPath = (Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\pwsh.exe\').'(default)'
+    $_.TargetPath = $WscriptExe
     # The command is partial because it does not include the markdown file path string.
     # The markdown file path string will be input when calling the shortcut link.
-    $_.Arguments = '-nol -ep Bypass -noni -nop -w Hidden -f "{0}" -MarkdownPath' -f (Set-ConvertMd2HtmlExtension '.ps1')
+    $_.Arguments = '"{0}"' -f $LauncherScript
     $_.IconLocation = $ShortcutLinkIcon
-    $_.Description = 'Launch a PowerShell Core background process that executes the shortcut menu target script.'
+    $_.Description = 'Launch a WScript process to run the shortcut link that will set the custom icon.'
     $_.Save()
     $ShortcutLinkPath = $_.FullName
     If (-not (Test-Path $ShortcutLinkPath -PathType Leaf)) {
@@ -46,7 +48,8 @@ Function Set-MarkdownToHtmlShortcut {
     Path = 'HKCU:\SOFTWARE\Classes\SystemFileAssociations\.md\shell\cv2html\Command'
     # %1 is the path to the selected mardown file to convert.
     # The script to hide the PowerShell console window is executed in GUI mode (WScript).
-    Value = 'C:\Windows\System32\wscript.exe "{0}" /MarkdownPath:"%1"' -f (Set-ConvertMd2HtmlExtension '.vbs')
+    # I keep using WScript.EXE because I cannot use the link directly in the registry.
+    Value = '{1} "{0}" /MarkdownPath:"%1" /RunLink' -f $LauncherScript,$WscriptExe
   }
   # Overwrite the key value if it already exists.
   # Otherwise, create it.
@@ -81,4 +84,10 @@ Function Remove-MarkdownToHtmlShortcut {
 
   # Remove the registry key of the shortcut verb.
   Remove-Item 'HKCU:\SOFTWARE\Classes\SystemFileAssociations\.md\shell\cv2html' -Recurse
+}
+
+# Export the function Convert-MarkdownToHtml.
+Get-Item -LiteralPath "$PSScriptRoot\Convert-MarkdownToHtml.ps1" |
+ForEach-Object {
+  New-Item -Path "Function:\$($_.BaseName)" -Value (Get-Content $_.FullName -Raw)
 }
