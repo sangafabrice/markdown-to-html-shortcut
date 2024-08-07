@@ -21,18 +21,25 @@
 ''' The Windows Script Host Shell COM object RegRead method reads the
 ''' PowerShell Core path string from the Registry. 
 ''' The Shell Automation Service COM grand-child object GetLink
-''' lists the properties of the intermediate shortcut link.
+''' creates the intermediate shortcut link in the TEMP folder.
 ''' The shortcut link sets a custom icon for the PowerShell Core
 ''' window instead of the proprietary icon.
 ''' The shortcut link lists a partial list of arguments
 ''' completed with the markdown path string.
+''' The FileSystem COM object creates and delete de shortcut link.
 ''' </remarks>
 ''' <param name="MarkdownPath">The input markdown path argument.</param>
 ''' <param name="RunLink">It specifies to run the shortcut link.</param>
+''' <param name="LinkName">The name of the link restarting the launcher.</param>
 Option Explicit
 
 ' The registry key stores the path to the PowerShell Core application.
 Const PWSH_KEY = "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\pwsh.exe\"
+' Shell special folder constant for %LOCALAPPDATA% parent of the Temp folder
+Const ssfLOCALAPPDATA = &H1c
+
+Dim strTempPath: strTempPath = CreateObject("Shell.Application"). _
+  NameSpace(ssfLOCALAPPDATA).ParseName("TEMP").Path
 
 ' Read the script execution arguments.
 With WScript.Arguments.Named
@@ -49,9 +56,14 @@ End If
 Const ERROR_MESSAGE_DELIM = "--"
 Const MESSAGE_BOX_TITLE = "Convert to HTML"
 
+' Read the script execution arguments after restart.
+Dim strLinkName : strLinkName = WScript.Arguments.Named("LinkName")
+
 With New ConversionWatcher
   .StartWith strMarkdownPath
 End With
+
+DeleteLink strLinkName
 
 ''' <summary>
 ''' Represents the shortcut target script runner watcher.
@@ -205,18 +217,24 @@ End Function
 
 ''' <summary>
 ''' Start the shortcut target PowerShell script with
-''' the path of the selected markdown file as an argument.
+''' the path of the selected markdown file and the link
+''' name as the arguments.
 ''' </summary>
 ''' <param name="strMarkdown">The input markdown path argument.</param>
 Sub StartWith(ByVal strMarkdown)
-  Dim strLink: strLink = ChangeScriptExtension(".lnk")
-  Dim strLinkDirName, strLinkFileName
-  SplitPath strLink, strLinkDirName, strLinkFileName
   With CreateObject("Shell.Application")
-    If Not IsLinkReady(.Namespace(strLinkDirName).ParseName(strLinkFileName).GetLink) Then
-      Exit Sub
-    End If
-    .ShellExecute strLink, " /MarkdownPath:" & GetPathArgument(strMarkdown)
+    ' Create a new link with the target command and run it.
+    Dim strLinkName: strLinkName = LCase(Mid(CreateObject("Scriptlet.TypeLib").Guid, 2, 36)) & ".tmp.lnk"
+    Dim strLinkPath: strLinkPath = strTempPath & "\" & strLinkName
+    CreateObject("Scripting.FileSystemObject").CreateTextFile(strLinkPath).Close
+    With .Namespace(strTempPath).ParseName(strLinkName).GetLink
+      .Path = WScript.FullName
+      .Arguments = GetPathArgument(WScript.ScriptFullName) & " /MarkdownPath:" & _
+        GetPathArgument(strMarkdown) & " /LinkName:" & strLinkName
+      .SetIconLocation ChangeScriptExtension(".ico"), 0
+      .Save
+    End With
+    .ShellExecute strLinkPath
   End With
 End Sub
 
@@ -272,3 +290,11 @@ End Sub
 Function GetPathArgument(ByVal strFile)
   GetPathArgument = """" & strFile & """"
 End Function
+
+''' <summary>
+''' Delete the shortcut link from the TEMP folder.
+''' </summary>
+''' <param name="strLinkName">The link file name.</param>
+Sub DeleteLink(ByVal strLinkName)
+  CreateObject("Scripting.FileSystemObject").DeleteFile strTempPath & "\" & strLinkName, True
+End Sub
