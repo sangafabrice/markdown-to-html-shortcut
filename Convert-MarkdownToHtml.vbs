@@ -78,18 +78,6 @@ Function IsLinkReady(ByVal objLink)
 End Function
 
 ''' <summary>
-''' Split the file path into its directory path and name.
-''' </summary>
-''' <param name="strFilePath">The file full path.</param>
-''' <param name="strDirName">The output directory full path string.</param>
-''' <param name="strFileName">The output file name.</param>
-Sub SplitPath(ByVal strFilePath, strDirName, strFileName)
-  Dim intDelimLastIndex: intDelimLastIndex = InStrRev(strFilePath, "\")
-  strDirName = Left(strFilePath, intDelimLastIndex - 1)
-  strFileName = Right(strFilePath, Len(strFilePath) - intDelimLastIndex)
-End Sub
-
-''' <summary>
 ''' Double-quote the file path to make it command-ready.
 ''' </summary>
 ''' <param name="strFile">The file path.</param>
