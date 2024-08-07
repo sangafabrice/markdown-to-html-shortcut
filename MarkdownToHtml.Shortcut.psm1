@@ -22,9 +22,8 @@ Function Set-MarkdownToHtmlShortcut {
     # The registry key of the command executed by the shortcut.
     Path = 'HKCU:\SOFTWARE\Classes\SystemFileAssociations\.md\shell\cv2html\Command'
     # %1 is the path to the selected mardown file to convert.
-    Value = '"{1}" -nol -ep Bypass -noni -nop -w Hidden -f "{0}" -MarkdownPath "%1"' -f "$PSScriptRoot\Convert-MarkdownToHtml.ps1",
-      # The registry key that stores the path to the PowerShell Core application.
-      (Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\pwsh.exe\').'(default)'
+    # The script to hide the PowerShell console window is executed in GUI mode (WScript).
+    Value = 'C:\Windows\System32\wscript.exe "{0}" /MarkdownPath:"%1"' -f "$PSScriptRoot\Convert-MarkdownToHtml.vbs"
   }
   # Overwrite the key value if it already exists.
   # Otherwise, create it.
